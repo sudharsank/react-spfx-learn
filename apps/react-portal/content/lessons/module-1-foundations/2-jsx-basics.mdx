@@ -1,0 +1,50 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="JSX is JavaScript with HTML-like syntax"
+  summary="JSX lets you write what looks like HTML inside JavaScript files. It gets compiled to regular JavaScript before the browser sees it — the browser never sees JSX directly."
+/>
+
+## JSX rules every developer must know
+
+<AnnotatedCode
+  title="jsx-rules.tsx"
+  language="tsx"
+  code={`// Rule 1: Return a single root element
+function Card() {
+  return (
+    <div>
+      <h2>Title</h2>
+      <p>Content</p>
+    </div>
+  );
+}
+
+// Rule 2: Self-close tags that have no children
+function Icon() {
+  return <img src="/logo.png" alt="Logo" />;
+}
+
+// Rule 3: Use className, not class
+function Button() {
+  return <button className="btn-primary">Click me</button>;
+}`}
+  annotations={[
+    { line: 3, label: 'Single root', explanation: 'JSX must return one top-level element. If you do not want an extra div in the DOM, use <> </> (React Fragment) as the wrapper instead.' },
+    { line: 13, label: 'Self-closing', explanation: 'In JSX, every tag without children must be self-closed with />. This includes <img>, <input>, <br>, and <hr>.' },
+    { line: 19, label: 'className', explanation: 'class is a reserved word in JavaScript, so JSX uses className for CSS classes. This is the most common gotcha for developers coming from HTML.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="JSX compilation"
+  realWorld="A recipe card vs. the actual dish"
+  analogy="JSX is the recipe card — a readable way to describe what you want. The compiler (Babel/SWC) is the chef that turns it into actual JavaScript the browser can execute."
+/>
+
+<DangerZone
+  title="Adjacent elements need a wrapper"
+  wrong={`function List() {\n  return (\n    <h2>Shopping List</h2>\n    <ul>...</ul>\n  );\n  // Error: Adjacent JSX elements must be wrapped\n}`}
+  right={`function List() {\n  return (\n    <>\n      <h2>Shopping List</h2>\n      <ul>...</ul>\n    </>\n  );\n}`}
+  explanation="JSX compiles to React.createElement() calls, and a function can only return one value. Wrap siblings in a Fragment (<>) to avoid adding unnecessary DOM nodes."
+/>

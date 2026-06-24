@@ -1,0 +1,50 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="Components are the building blocks of React"
+  summary="A component is a function that accepts inputs (props) and returns JSX describing a piece of UI. Build small, focused components and compose them into larger ones."
+  variant="highlight"
+/>
+
+## Props: passing data into components
+
+<AnnotatedCode
+  title="UserCard.tsx"
+  language="tsx"
+  code={`interface UserCardProps {
+  name: string;
+  role: string;
+  avatarUrl?: string;
+}
+
+function UserCard({ name, role, avatarUrl }: UserCardProps) {
+  return (
+    <div className="card">
+      {avatarUrl && <img src={avatarUrl} alt={name} />}
+      <h3>{name}</h3>
+      <p>{role}</p>
+    </div>
+  );
+}
+
+// Usage
+<UserCard name="Sudharsan" role="Architect" />`}
+  annotations={[
+    { line: 1, label: 'Props interface', explanation: 'TypeScript interfaces describe the shape of props. This gives you autocomplete, type-checking, and self-documenting code — always define them.' },
+    { line: 7, label: 'Destructuring', explanation: 'Destructuring props in the function signature is the standard pattern. It is more readable than accessing props.name, props.role everywhere.' },
+    { line: 10, label: 'Conditional render', explanation: '{avatarUrl && <img />} renders the image only when avatarUrl has a value. This is the standard JSX pattern for conditional content.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Props"
+  realWorld="A form with pre-filled fields"
+  analogy="Props are like filling in a form before handing it to a colleague. You pass the values in; what they do with them is up to the component. The component cannot change the form — it can only read it."
+/>
+
+<DangerZone
+  title="Never modify props directly"
+  wrong={`function BadComponent(props) {\n  props.name = 'Modified'; // This will throw in strict mode\n  return <p>{props.name}</p>;\n}`}
+  right={`function GoodComponent({ name }) {\n  // Props are read-only — use local state if you need to transform them\n  return <p>{name}</p>;\n}`}
+  explanation="Props flow one direction — from parent to child. A component that modifies its own props breaks the predictability that makes React easy to reason about. Use state for values that need to change."
+/>
