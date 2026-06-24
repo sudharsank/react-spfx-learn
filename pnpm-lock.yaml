@@ -76,6 +76,64 @@ importers:
         specifier: ^5.8.0
         version: 5.9.3
 
+  apps/spfx-portal:
+    dependencies:
+      '@mdx-js/loader':
+        specifier: latest
+        version: 3.1.1
+      '@mdx-js/react':
+        specifier: latest
+        version: 3.1.1(@types/react@19.2.17)(react@19.2.7)
+      '@next/mdx':
+        specifier: latest
+        version: 16.2.9(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))
+      '@repo/adaptive':
+        specifier: workspace:*
+        version: link:../../packages/adaptive
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@repo/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      gray-matter:
+        specifier: ^4.0.3
+        version: 4.0.3
+      next:
+        specifier: ^15.1.0
+        version: 15.5.19(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.7(react@19.2.7)
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.0.0
+        version: 4.3.1
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.20.0
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.17)
+      postcss:
+        specifier: ^8.0.0
+        version: 8.5.15
+      tailwindcss:
+        specifier: ^4.0.0
+        version: 4.3.1
+      typescript:
+        specifier: ^5.8.0
+        version: 5.9.3
+
   packages/adaptive:
     devDependencies:
       typescript:
