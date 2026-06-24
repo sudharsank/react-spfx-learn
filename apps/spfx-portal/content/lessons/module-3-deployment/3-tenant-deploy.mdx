@@ -1,1 +1,82 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # Tenant Deployment
+
+<ConceptCard
+  title="Deployment is: upload .sppkg → approve API permissions → add to page"
+  summary="Deploying an SPFx solution to your tenant has three steps: upload the .sppkg to the Tenant App Catalog, approve any API permissions, then add the web part to a SharePoint page. Use the Debug Toolbar (not the hosted workbench) to verify it works."
+/>
+
+## Step 1 — Upload the .sppkg
+
+<AnnotatedCode
+  title="Deployment steps"
+  language="text"
+  code={`1. Run the production build:
+   heft clean && heft bundle --production && heft package-solution --production
+
+2. Find the .sppkg file:
+   sharepoint/solution/your-solution-name.sppkg
+
+3. Go to your Tenant App Catalog:
+   https://yourtenant.sharepoint.com/sites/appcatalog
+
+4. Drag the .sppkg into the "Apps for SharePoint" library
+   or use the Upload button
+
+5. In the trust dialog:
+   - Check "Make this solution available to all sites in the organization"
+     (for tenant-wide deployment)
+   - Click Deploy`}
+  annotations={[
+    { line: 2, label: 'production build', explanation: 'Always use --production for deployment. A non-production bundle points to localhost:4321, which is only available when your dev machine is running.' },
+    { line: 13, label: 'tenant-wide deployment', explanation: 'If checked, the web part is immediately available on all sites without site admins needing to add it. If unchecked, each site admin must add the solution from Site Contents.' },
+  ]}
+/>
+
+## Step 2 — Approve API permissions
+
+If your web part calls Microsoft Graph, go to:
+
+```text
+SharePoint Admin Center → API access → Pending approvals
+```
+
+Approve each permission request. Without this step, Graph calls will return 403 Forbidden.
+
+## Step 3 — Verify with Debug Toolbar
+
+<AnnotatedCode
+  title="Debug Toolbar URL parameters"
+  language="text"
+  code={`# Open a real SharePoint page and append these params:
+https://yourtenant.sharepoint.com/sites/yoursite/SitePages/Home.aspx
+  ?debug=true
+  &noredir=true
+  &debugManifestsFile=https://localhost:4321/temp/manifests.js
+
+# This loads your LOCAL bundle into a REAL SharePoint page
+# Only works when heft start is running on your machine`}
+  annotations={[
+    { line: 3, label: 'debug=true', explanation: 'Switches SharePoint into debug mode. A small toolbar appears at the bottom of the page with a button to add web parts from local manifests.' },
+    { line: 5, label: 'debugManifestsFile', explanation: 'Points to the manifest file served by your local Heft dev server. SharePoint reads this to discover which web parts you have available locally.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Debug Toolbar workflow"
+  realWorld="A mechanic testing a car on a real road, not a lift"
+  analogy="The Debug Toolbar lets you test your web part in a real SharePoint environment — with real lists, real users, and real permissions — while still loading code from your local machine. It's the difference between testing a car on a real road versus a static testing lift."
+/>
+
+<DangerZone
+  title="The hosted workbench is deprecated — do not use it"
+  wrong={`# Do not use this for testing
+https://yourtenant.sharepoint.com/_layouts/15/workbench.aspx
+
+# It cannot run real SharePoint API calls correctly
+# Microsoft has deprecated it and may remove it`}
+  right={`# Use the Debug Toolbar on a real SharePoint page
+https://yourtenant.sharepoint.com/sites/yoursite/SitePages/Home.aspx?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/manifests.js`}
+  explanation="The hosted workbench is a legacy tool that cannot replicate real SharePoint context, permissions, or navigation. All SPFx testing should be done on real SharePoint pages using the Debug Toolbar approach."
+/>

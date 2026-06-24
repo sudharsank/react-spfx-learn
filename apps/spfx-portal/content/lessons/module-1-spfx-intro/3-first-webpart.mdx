@@ -1,1 +1,78 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # Your First Web Part
+
+<ConceptCard
+  title="Scaffold with yo, serve with heft start"
+  summary="Creating your first SPFx web part takes three steps: scaffold the project with the Yeoman generator, run heft start to start the local dev server, then open a real SharePoint page with debug query parameters to load your local bundle."
+/>
+
+## Step 1 — Scaffold the project
+
+<AnnotatedCode
+  title="Terminal — scaffold a new SPFx project"
+  language="bash"
+  code={`mkdir my-first-webpart
+cd my-first-webpart
+yo @microsoft/sharepoint
+
+# The generator will ask:
+# - Solution name: my-first-webpart
+# - Target: SharePoint Online only
+# - Component type: Web part
+# - Web part name: HelloWorld
+# - Framework: React`}
+  annotations={[
+    { line: 3, label: 'yo @microsoft/sharepoint', explanation: 'This runs the Yeoman generator. It asks a series of questions then creates the full project structure: config/, src/, and all required JSON files.' },
+    { line: 9, label: 'Framework: React', explanation: 'Always choose React unless you have a specific reason not to. The React template generates a TypeScript web part class that bootstraps a React component via ReactDom.render().' },
+  ]}
+/>
+
+## Step 2 — Start the dev server
+
+<AnnotatedCode
+  title="Terminal — start local dev server"
+  language="bash"
+  code={`cd my-first-webpart
+heft start
+
+# Output: Local server running at https://localhost:4321/
+# The server watches for changes and rebuilds automatically`}
+  annotations={[
+    { line: 2, label: 'heft start', explanation: 'heft start replaces the old gulp serve command. It starts a local HTTPS server on port 4321 that hosts your web part bundle. SharePoint will load the bundle from here during debug.' },
+  ]}
+/>
+
+## Step 3 — Load in SharePoint
+
+The hosted workbench (`/_layouts/15/workbench.aspx`) is deprecated. Instead, use a real SharePoint page with debug query parameters:
+
+<AnnotatedCode
+  title="Debug URL format"
+  language="text"
+  code={`https://yourtenant.sharepoint.com/sites/yoursite/SitePages/Home.aspx
+  ?debug=true
+  &noredir=true
+  &debugManifestsFile=https://localhost:4321/temp/manifests.js`}
+  annotations={[
+    { line: 2, label: 'debug=true', explanation: "Tells SharePoint to load web parts in debug mode — it will look for local manifests instead of only using deployed bundles." },
+    { line: 3, label: 'noredir=true', explanation: "Prevents SharePoint from redirecting you away from the page if it detects you're in debug mode." },
+    { line: 4, label: 'debugManifestsFile', explanation: 'Points to your local Heft dev server. This is where SharePoint loads your web part bundle from during development.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Debug Toolbar vs. hosted workbench"
+  realWorld="Testing a car on a real road vs. a simulator"
+  analogy="The hosted workbench was a simulator — a fake SharePoint page that did not have real lists, users, or permissions. The Debug Toolbar loads your web part into a real SharePoint page, so data, permissions, and navigation all work exactly as they will in production."
+/>
+
+<DangerZone
+  title="The hosted workbench is deprecated"
+  wrong={`# Do not use this URL
+https://yourtenant.sharepoint.com/_layouts/15/workbench.aspx
+# Microsoft has deprecated it and may remove it at any time`}
+  right={`# Use a real SharePoint page with debug params instead
+https://yourtenant.sharepoint.com/sites/yoursite/SitePages/Home.aspx?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/manifests.js`}
+  explanation="The hosted workbench was never a complete SharePoint environment. It could not run real SharePoint API calls correctly. Always test on a real SharePoint page using the Debug Toolbar approach."
+/>

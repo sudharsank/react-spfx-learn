@@ -1,1 +1,57 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # What is SPFx?
+
+<ConceptCard
+  title="SPFx runs React inside the SharePoint page lifecycle"
+  summary="SharePoint Framework (SPFx) is Microsoft's client-side development model for SharePoint. Your web part is a React + TypeScript component that SharePoint loads into its page, giving you access to the SharePoint context, user identity, and Graph API — all without iframes."
+/>
+
+## The SPFx Architecture
+
+The call chain is: SharePoint Page → Web Part instance → SPFx component → React → DOM.
+
+SharePoint loads your `.sppkg` bundle, calls your web part's `render()` method, and your code uses `ReactDom.render()` to mount a React component into a `div` that SharePoint provides.
+
+<AnnotatedCode
+  title="HelloWorldWebPart.ts — minimal render method"
+  language="typescript"
+  code={`import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import HelloWorld from './components/HelloWorld';
+
+export default class HelloWorldWebPart extends BaseClientSideWebPart {
+  public render(): void {
+    const element = React.createElement(HelloWorld, {
+      description: this.properties.description,
+      context: this.context,
+    });
+    ReactDom.render(element, this.domElement);
+  }
+}`}
+  annotations={[
+    { line: 4, label: 'BaseClientSideWebPart', explanation: 'Every SPFx web part extends this class. It wires your code into the SharePoint page lifecycle — load, render, unload.' },
+    { line: 7, label: 'render()', explanation: "SharePoint calls render() when it's time to display your web part. It's your entry point — equivalent to index.tsx in a standalone React app." },
+    { line: 9, label: 'this.domElement', explanation: "SharePoint gives you a DOM element (a div) to render into. This is how your React tree is mounted. You don't control the parent page — only this element." },
+  ]}
+/>
+
+## Why SPFx, not SharePoint Add-ins?
+
+<AnalogyBridge
+  concept="SPFx vs. iframes"
+  realWorld="A popup window vs. a native dialog"
+  analogy="Old SharePoint Add-ins ran in iframes — like a popup that could not share data with the host page. SPFx runs in the page itself, like a native dialog, sharing the user session, styles, and Graph tokens with no cross-origin friction."
+/>
+
+<DangerZone
+  title="SPFx is NOT SharePoint Add-ins"
+  wrong={`// Add-ins ran in a separate app domain (iframe)
+// They are deprecated as of 2026
+// Do not build new solutions using the Add-in model`}
+  right={`// SPFx runs in the SharePoint page itself
+// It uses React + TypeScript, deployed via App Catalog
+// This is the only supported client-side model going forward`}
+  explanation="SharePoint Add-ins (formerly 'Apps for SharePoint') are deprecated. Any tutorial referencing the 'app model', 'provider-hosted apps', or 'SharePoint-hosted apps' is outdated. Only use SPFx for new SharePoint customisations."
+/>

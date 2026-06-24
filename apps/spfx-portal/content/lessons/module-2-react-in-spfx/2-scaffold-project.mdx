@@ -1,1 +1,100 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # Scaffold with Yeoman
+
+<ConceptCard
+  title="yo @microsoft/sharepoint generates a complete project structure"
+  summary="The Yeoman generator creates everything you need: TypeScript config, Heft config, the web part class, a React component, and the solution manifest. Understanding each file lets you customise confidently."
+/>
+
+## Key files generated
+
+After running `yo @microsoft/sharepoint` for a web part named `HelloWorld`, the structure looks like this:
+
+```text
+my-webpart/
+├── config/
+│   ├── heft.json               ← Heft build config
+│   ├── package-solution.json   ← Solution metadata + CDN settings
+│   └── serve.json              ← Local dev server config (legacy, ignored by heft start)
+├── src/
+│   └── webparts/
+│       └── helloWorld/
+│           ├── HelloWorldWebPart.ts        ← Web part class
+│           ├── HelloWorldWebPart.manifest.json
+│           └── components/
+│               ├── HelloWorld.tsx          ← React component
+│               └── HelloWorld.module.scss
+├── package.json
+└── tsconfig.json
+```
+
+## The web part class bootstraps React
+
+<AnnotatedCode
+  title="HelloWorldWebPart.ts — how SPFx bootstraps React"
+  language="typescript"
+  code={`import * as React from 'react';
+import * as ReactDom from 'react-dom';
+import { Version } from '@microsoft/sp-core-library';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import HelloWorld, { IHelloWorldProps } from './components/HelloWorld';
+
+export default class HelloWorldWebPart extends BaseClientSideWebPart<{}> {
+  public render(): void {
+    const element: React.ReactElement<IHelloWorldProps> = React.createElement(
+      HelloWorld,
+      {
+        description: this.properties.description,
+        context: this.context,
+      }
+    );
+    ReactDom.render(element, this.domElement);
+  }
+
+  protected onDispose(): void {
+    ReactDom.unmountComponentAtNode(this.domElement);
+  }
+
+  protected get dataVersion(): Version {
+    return Version.parse('1.0');
+  }
+}`}
+  annotations={[
+    { line: 7, label: 'BaseClientSideWebPart', explanation: 'This is the SPFx base class. It handles lifecycle events from SharePoint: when to render, when to re-render on property change, and when to clean up.' },
+    { line: 8, label: 'render()', explanation: 'SharePoint calls this when it needs to display your web part. You create a React element and mount it into this.domElement — the div SharePoint gave you.' },
+    { line: 19, label: 'onDispose()', explanation: 'SharePoint calls this when the web part is removed from the page. Unmounting the React tree prevents memory leaks from event listeners and subscriptions.' },
+    { line: 23, label: 'dataVersion', explanation: 'This version number is attached to your web part properties. If you change the property schema, bump this version so SharePoint can migrate old data.' },
+  ]}
+/>
+
+## heft.json — the build config
+
+<AnnotatedCode
+  title="config/heft.json — minimal example"
+  language="json"
+  code={`{
+  "$schema": "https://developer.microsoft.com/json-schemas/heft/v0/heft.schema.json",
+  "phasesByName": {
+    "build": {
+      "phaseDescription": "Compiles TypeScript and copies assets",
+      "tasksByName": {
+        "typescript": {
+          "taskPlugin": {
+            "pluginPackage": "@rushstack/heft-typescript-plugin"
+          }
+        }
+      }
+    }
+  }
+}`}
+  annotations={[
+    { line: 3, label: 'phasesByName', explanation: "Heft organises work into phases (build, test, package). Each phase contains tasks. The SPFx generator adds the phases it needs — you rarely edit heft.json by hand." },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Web part class vs. React component"
+  realWorld="A picture frame vs. the picture inside"
+  analogy="The web part class (HelloWorldWebPart.ts) is the frame — it handles SharePoint's lifecycle, property pane, and permissions. The React component (HelloWorld.tsx) is the picture — it handles what the user sees and interacts with. SPFx keeps them separate so you can swap the picture without changing the frame."
+/>

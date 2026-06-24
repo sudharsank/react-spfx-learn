@@ -1,1 +1,75 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # React Primer for SPFx
+
+<ConceptCard
+  title="You only need three React concepts for SPFx"
+  summary="SPFx uses React as a rendering layer, but you don't need to be a React expert to build web parts. Three concepts cover 90% of SPFx use cases: components (functions that return JSX), props (data passed in), and useState (local reactive data). For a deeper dive into React itself, visit the React Learning Portal."
+/>
+
+## Components and Props
+
+<AnnotatedCode
+  title="HelloWorld.tsx — a typical SPFx React component"
+  language="tsx"
+  code={`import * as React from 'react';
+
+export interface IHelloWorldProps {
+  description: string;
+  context: any; // sp-webpart-base provides WebPartContext
+}
+
+const HelloWorld: React.FC<IHelloWorldProps> = ({ description, context }) => {
+  return (
+    <div className="helloWorld">
+      <p>{description}</p>
+      <p>Current user: {context.pageContext.user.displayName}</p>
+    </div>
+  );
+};
+
+export default HelloWorld;`}
+  annotations={[
+    { line: 3, label: 'IHelloWorldProps', explanation: 'SPFx generates a props interface for every component. Props are the data the web part class passes down — description comes from the property pane, context from SharePoint.' },
+    { line: 11, label: 'context.pageContext', explanation: 'The SharePoint context object gives you access to the current user, site URL, list info, and AAD tokens. It flows from the web part class into your React component via props.' },
+  ]}
+/>
+
+## useState for local data
+
+<AnnotatedCode
+  title="Adding local state to a web part component"
+  language="tsx"
+  code={`import * as React from 'react';
+const { useState } = React;
+
+const Counter: React.FC = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Clicked {count} times
+    </button>
+  );
+};`}
+  annotations={[
+    { line: 2, label: "const { useState } = React", explanation: "In SPFx you import React as a namespace (import * as React from 'react'), so you destructure hooks from it rather than using named imports. Both patterns work in React 19, but SPFx generators use the namespace pattern." },
+    { line: 5, label: 'useState(0)', explanation: 'useState returns a value and a setter. When the setter is called, React re-renders the component with the new value. This is local state — it does not persist across page reloads.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Props vs. state"
+  realWorld="A TV set vs. the remote control"
+  analogy="Props are like the TV model (fixed by whoever built it — the web part class). State is the remote control (the user changes channels, volume — local, temporary, interactive). Props come from outside; state lives inside the component."
+/>
+
+<DangerZone
+  title="Do not import React hooks as named imports in SPFx"
+  wrong={`// This works in standalone React but can cause issues in SPFx
+import { useState, useEffect } from 'react';`}
+  right={`// SPFx pattern: namespace import then destructure
+import * as React from 'react';
+const { useState, useEffect } = React;`}
+  explanation="SPFx generators produce namespace imports (import * as React). While named imports work in React 19, mixing patterns in the same project can confuse older SPFx tooling. Stick to the namespace pattern for consistency."
+/>

@@ -1,1 +1,105 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # PnP JS Basics
+
+<ConceptCard
+  title="@pnp/sp is the standard way to query SharePoint from SPFx"
+  summary="PnP JS (@pnp/sp) is a fluent TypeScript library that wraps the SharePoint REST API. You initialise it once in onInit(), then use it anywhere in your web part to query lists, files, and users without writing raw fetch calls."
+/>
+
+## Install
+
+```bash
+npm install @pnp/sp @pnp/core @pnp/queryable
+```
+
+## Initialise in onInit()
+
+<AnnotatedCode
+  title="HelloWorldWebPart.ts — initialising @pnp/sp"
+  language="typescript"
+  code={`import { spfi, SPFx } from '@pnp/sp';
+import '@pnp/sp/webs';
+import '@pnp/sp/lists';
+import '@pnp/sp/items';
+
+export default class HelloWorldWebPart extends BaseClientSideWebPart<{}> {
+  private _sp: ReturnType<typeof spfi>;
+
+  public async onInit(): Promise<void> {
+    await super.onInit();
+    this._sp = spfi().using(SPFx(this.context));
+  }
+
+  public render(): void {
+    const element = React.createElement(HelloWorld, {
+      sp: this._sp,
+      context: this.context,
+    });
+    ReactDom.render(element, this.domElement);
+  }
+}`}
+  annotations={[
+    { line: 9, label: 'onInit()', explanation: 'onInit() fires before render(). This is where you must initialise external services like PnP JS. The SharePoint context (this.context) is not fully ready until onInit() runs.' },
+    { line: 11, label: 'spfi().using(SPFx(this.context))', explanation: 'This creates a PnP SP instance bound to your web part context. It injects the current site URL and auth tokens so every request goes to the right SharePoint site automatically.' },
+  ]}
+/>
+
+## Query a SharePoint list
+
+<AnnotatedCode
+  title="HelloWorld.tsx — fetch list items with @pnp/sp"
+  language="tsx"
+  code={`import * as React from 'react';
+const { useState, useEffect } = React;
+
+interface ITask {
+  Id: number;
+  Title: string;
+}
+
+const HelloWorld: React.FC<{ sp: any }> = ({ sp }) => {
+  const [tasks, setTasks] = useState<ITask[]>([]);
+
+  useEffect(() => {
+    sp.web.lists.getByTitle('Tasks').items()
+      .then((items: ITask[]) => setTasks(items))
+      .catch(console.error);
+  }, []);
+
+  return (
+    <ul>
+      {tasks.map((t) => <li key={t.Id}>{t.Title}</li>)}
+    </ul>
+  );
+};`}
+  annotations={[
+    { line: 13, label: "getByTitle('Tasks').items()", explanation: "This is PnP JS's fluent API. It builds and executes a REST request to /_api/web/lists/getByTitle('Tasks')/items. You get back a typed array." },
+    { line: 12, label: 'useEffect', explanation: 'Run the fetch once when the component mounts (empty dependency array []). This is the correct pattern for initial data loading in React.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="onInit vs. constructor"
+  realWorld="Checking in at a hotel vs. booking the room"
+  analogy="The constructor runs before SharePoint is ready — like booking a room before the hotel exists. onInit() runs after SharePoint has set up the context — like checking in when the hotel is open and your room is ready. Always initialise SharePoint services in onInit(), not the constructor."
+/>
+
+<DangerZone
+  title="Never call SharePoint API in the constructor"
+  wrong={`export default class MyWebPart extends BaseClientSideWebPart<{}> {
+  constructor() {
+    super();
+    // WRONG: this.context is undefined here
+    this._sp = spfi().using(SPFx(this.context));
+  }
+}`}
+  right={`export default class MyWebPart extends BaseClientSideWebPart<{}> {
+  public async onInit(): Promise<void> {
+    await super.onInit();
+    // CORRECT: this.context is fully ready here
+    this._sp = spfi().using(SPFx(this.context));
+  }
+}`}
+  explanation="The SPFx lifecycle initialises this.context during onInit(). In the constructor, this.context is undefined. Calling SharePoint API in the constructor will throw a runtime error."
+/>

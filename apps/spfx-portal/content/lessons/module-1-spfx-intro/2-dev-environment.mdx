@@ -1,1 +1,46 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # Dev Environment
+
+<ConceptCard
+  title="SPFx 1.22+ uses Heft instead of gulp"
+  summary="Setting up for SPFx requires Node 22 LTS, the Heft build toolchain from Rush Stack, and the Yeoman generator for Microsoft SharePoint. As of SPFx 1.22, gulp is no longer used — Heft replaces it entirely."
+/>
+
+## What you need to install
+
+<AnnotatedCode
+  title="Global installs — run once per machine"
+  language="bash"
+  code={`# 1. Install Node 22 LTS (use nvm or the official installer)
+nvm install 22
+nvm use 22
+node --version   # should print v22.x.x
+
+# 2. Install global tools
+npm install --global @rushstack/heft yo @microsoft/generator-sharepoint
+
+# 3. Verify
+yo --version
+heft --version`}
+  annotations={[
+    { line: 2, label: 'Node 22 LTS', explanation: 'SPFx 1.22 requires Node 18 or 22 LTS. Node 20 also works but 22 is preferred for longer support. Do NOT use odd-numbered versions (Node 19, 21, 23) — they are not LTS and SPFx does not test against them.' },
+    { line: 7, label: '@rushstack/heft', explanation: 'Heft is the build orchestrator that replaces gulp. It runs TypeScript compilation, Jest tests, and solution packaging through a single CLI.' },
+    { line: 7, label: '@microsoft/generator-sharepoint', explanation: 'The Yeoman generator scaffolds new SPFx projects. It creates the correct folder structure, config files, and a starter web part.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Heft replacing gulp"
+  realWorld="A Swiss Army knife replacing a toolbox"
+  analogy="gulp was a task runner — you wired together plugins yourself (compile TypeScript, copy assets, bundle). Heft is a pre-configured Swiss Army knife: it already knows how to build SPFx projects. You just run heft build."
+/>
+
+<DangerZone
+  title="Do NOT install gulp globally for SPFx 1.22+"
+  wrong={`npm install --global gulp
+gulp serve   # This was the old workflow — it no longer works`}
+  right={`heft start   # Local dev server (replaces gulp serve)
+heft build   # Production build (replaces gulp build)`}
+  explanation="If you follow an older tutorial that says 'npm install -g gulp' and 'gulp serve', stop. As of SPFx 1.22, the Heft toolchain fully replaces gulp. Installing gulp globally can cause version conflicts."
+/>

@@ -1,1 +1,66 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # Build with Heft
+
+<ConceptCard
+  title="heft package-solution --production creates your .sppkg"
+  summary="The Heft build pipeline has three stages: clean, build (TypeScript + assets), and package-solution (bundle + .sppkg). Only --production minifies the bundle and writes the CDN URL into the manifest. Never deploy a non-production build."
+/>
+
+## Full command reference
+
+<AnnotatedCode
+  title="Heft command table"
+  language="bash"
+  code={`# Remove all build output (dist/, temp/, .sppkg)
+heft clean
+
+# Compile TypeScript, copy assets — for local dev verification
+heft build
+
+# Start local dev server (watch mode)
+heft start
+
+# Create a production .sppkg in sharepoint/solution/
+heft bundle --production
+heft package-solution --production
+
+# Or run both in sequence (most common)
+heft clean && heft bundle --production && heft package-solution --production`}
+  annotations={[
+    { line: 2, label: 'heft clean', explanation: 'Deletes dist/, temp/, and any .sppkg files. Run this before a production build to ensure no stale files are included in your package.' },
+    { line: 5, label: 'heft build', explanation: 'Compiles TypeScript and copies assets to temp/. Does not bundle for production. Use this to quickly check for type errors during development.' },
+    { line: 8, label: 'heft start', explanation: 'Starts the local HTTPS dev server on port 4321 in watch mode. Use this for active development with the Debug Toolbar in SharePoint.' },
+    { line: 11, label: '--production', explanation: 'Without --production, the bundle is unminified and references localhost. With --production, the bundle is minified and the manifest CDN URL points to your configured CDN (or the App Catalog CDN).' },
+  ]}
+/>
+
+## What --production changes
+
+<AnnotatedCode
+  title="package-solution.json — CDN URL written by --production"
+  language="json"
+  code={`{
+  "$schema": "...",
+  "solution": {
+    "name": "my-webpart-client-side-solution",
+    "id": "...",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "isDomainIsolated": false
+  },
+  "paths": {
+    "zippedPackage": "solution/my-webpart.sppkg"
+  }
+}`}
+  annotations={[
+    { line: 7, label: 'includeClientSideAssets: true', explanation: 'When true, Heft bundles your JS and CSS inside the .sppkg. SharePoint then hosts them from the App Catalog CDN automatically. This is the default and recommended setting.' },
+    { line: 8, label: 'isDomainIsolated', explanation: 'Domain isolation runs your web part in an iframe with a separate domain for security. Only needed for solutions that handle sensitive data. Default is false.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="--production flag"
+  realWorld="Publishing vs. draft mode in a CMS"
+  analogy="heft build is draft mode — fast, readable, points to localhost. heft bundle --production is publish mode — minified, no source maps, CDN URL in the manifest, ready for real users."
+/>

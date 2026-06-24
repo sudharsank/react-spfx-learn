@@ -1,1 +1,63 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
 # App Catalog
+
+<ConceptCard
+  title="The App Catalog is SharePoint's app store for your tenant"
+  summary="The App Catalog is a special SharePoint site where you upload .sppkg files to deploy SPFx solutions. There are two types: the Tenant App Catalog (deploys to all sites) and Site Collection App Catalogs (deploys to one site only)."
+/>
+
+## Tenant vs Site Collection App Catalog
+
+| | Tenant App Catalog | Site Collection App Catalog |
+|---|---|---|
+| Scope | All sites in the tenant | One site collection |
+| Who manages it | SharePoint Admin | Site Collection Admin |
+| URL | `/sites/appcatalog` | `/sites/yoursite/_catalogs/AppCatalog` |
+| Use case | Organisation-wide solutions | Team or project-specific solutions |
+
+## How to access the Tenant App Catalog
+
+<AnnotatedCode
+  title="Finding your Tenant App Catalog"
+  language="text"
+  code={`1. Go to SharePoint Admin Center
+   https://yourtenant-admin.sharepoint.com
+
+2. Click "More features" in the left nav
+
+3. Under "Apps", click "Open"
+
+4. This opens your Tenant App Catalog at:
+   https://yourtenant.sharepoint.com/sites/appcatalog`}
+  annotations={[
+    { line: 2, label: 'SharePoint Admin Center', explanation: 'You need the SharePoint Administrator role (or Global Administrator) to access the Admin Center. Regular site admins cannot manage the Tenant App Catalog.' },
+    { line: 7, label: '/sites/appcatalog', explanation: "The URL may differ if your tenant's App Catalog was created with a different name. Check SharePoint Admin Center > Active sites to find it." },
+  ]}
+/>
+
+## What uploading a .sppkg does
+
+When you upload a `.sppkg` file to the App Catalog:
+
+1. SharePoint extracts the manifest to learn what the solution contains
+2. It shows you a trust dialog — you grant or deny tenant-wide deployment
+3. If approved with tenant-wide deployment, the web part becomes available on every site immediately
+4. If not tenant-wide, site admins must still add it to their site from the Site Contents page
+
+<AnalogyBridge
+  concept=".sppkg deployment"
+  realWorld="Submitting an app to the App Store"
+  analogy="Uploading a .sppkg to the App Catalog is like submitting an app to the App Store — the admin reviews and approves it, then it becomes available to the right users. Tenant-wide deployment is like a company pushing a required app to all employee devices automatically."
+/>
+
+<DangerZone
+  title="API permissions must be approved separately"
+  wrong={`// Do not assume your web part can call Graph API just because
+// the .sppkg was approved. Graph permissions need separate approval.`}
+  right={`// After uploading .sppkg:
+// 1. Go to SharePoint Admin Center > API access
+// 2. Approve the Graph API permissions your solution requested
+// 3. Then test your web part — Graph calls will now work`}
+  explanation="If your web part uses Microsoft Graph, the Graph API permission requests are queued when you upload the .sppkg. A SharePoint or Global Admin must explicitly approve them in the API Access page before your web part can call Graph."
+/>
