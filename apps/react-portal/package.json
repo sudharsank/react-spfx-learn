@@ -1,0 +1,34 @@
+{
+  "name": "react-portal",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@repo/ui": "workspace:*",
+    "@repo/auth": "workspace:*",
+    "@repo/adaptive": "workspace:*",
+    "@repo/content": "workspace:*",
+    "@next/mdx": "latest",
+    "@mdx-js/loader": "latest",
+    "@mdx-js/react": "latest",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.0.0",
+    "typescript": "^5.8.0"
+  }
+}
