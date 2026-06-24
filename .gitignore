@@ -1,0 +1,8 @@
+node_modules
+.next
+out
+dist
+.turbo
+.env.local
+.env*.local
+*.sppkg

@@ -1,0 +1,15 @@
+{
+  "name": "react-spfx-learn",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "typescript": "^5.8.0"
+  }
+}
