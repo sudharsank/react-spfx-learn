@@ -1,0 +1,63 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="Composition: building UIs from interchangeable parts"
+  summary="React components compose rather than inherit. Pass JSX as the children prop (or named slot props) to build flexible, reusable containers that work with any content."
+/>
+
+## The children prop and slot pattern
+
+<AnnotatedCode
+  title="Card.tsx"
+  language="tsx"
+  code={`import { ReactNode } from 'react';
+
+interface CardProps {
+  title: string;
+  actions?: ReactNode;
+  children: ReactNode;
+}
+
+function Card({ title, actions, children }: CardProps) {
+  return (
+    <div className="rounded-lg border border-gray-200 shadow-sm">
+      <div className="flex items-center justify-between px-4 py-3 border-b">
+        <h3 className="font-semibold">{title}</h3>
+        {actions && <div className="flex gap-2">{actions}</div>}
+      </div>
+      <div className="p-4">{children}</div>
+    </div>
+  );
+}
+
+// Usage — Card accepts any content without knowing what it is
+function UserProfileCard() {
+  return (
+    <Card
+      title="Sudharsan K"
+      actions={<button>Edit</button>}
+    >
+      <p>Azure Architect · SharePoint MVP</p>
+      <p>Joined 2018</p>
+    </Card>
+  );
+}`}
+  annotations={[
+    { line: 5, label: 'Named slot prop', explanation: 'actions is a slot — an optional area for caller-supplied JSX. Slots let you customise specific regions without hard-coding what goes there.' },
+    { line: 6, label: 'children prop', explanation: 'children is a special prop that receives whatever JSX you nest between the component tags. Card does not need to know about UserProfileCard at all.' },
+    { line: 14, label: 'Conditional slot', explanation: '{actions && <div>} renders the actions area only when the caller passes something in — zero effort for callers who do not need it.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Component composition"
+  realWorld="Lego bricks"
+  analogy="Lego bricks do not inherit properties from each other — they connect. A Card is a brick with a slot. You push other bricks into the slot. Neither brick cares what the other looks like internally. That is composition."
+/>
+
+<DangerZone
+  title="Prefer composition over prop-drilling configuration"
+  wrong={`// Passing showHeader, showFooter, showAvatar as boolean flags\nfunction ProfileCard({ name, showHeader, showFooter, showAvatar }) {\n  return (\n    <div>\n      {showHeader && <h2>{name}</h2>}\n      {showAvatar && <img src="..." />}\n      {showFooter && <p>footer</p>}\n    </div>\n  );\n}\n// Callers must know about every variation`}
+  right={`// Callers compose what they need\nfunction ProfileCard({ header, footer, children }) {\n  return (\n    <div>\n      {header}\n      {children}\n      {footer}\n    </div>\n  );\n}\n// Each caller decides its own layout`}
+  explanation="Boolean configuration props ('showX', 'hasY', 'enableZ') are a sign that a component is trying to do too much. Replace them with slot props or children — let callers compose what they need rather than enumerating every possible state in a single component."
+/>

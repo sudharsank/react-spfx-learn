@@ -1,0 +1,75 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="Lifting state: one source of truth for shared data"
+  summary="When two sibling components need the same piece of state, move it up to their closest common parent. The parent owns the state and passes it down via props — siblings stay in sync automatically."
+  variant="highlight"
+/>
+
+## A controlled filter list
+
+<AnnotatedCode
+  title="FilterList.tsx"
+  language="tsx"
+  code={`import { useState } from 'react';
+
+// Parent owns the state
+function FilterList({ items }: { items: string[] }) {
+  const [query, setQuery] = useState('');
+
+  const filtered = items.filter(item =>
+    item.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div>
+      <SearchInput value={query} onChange={setQuery} />
+      <ResultList items={filtered} />
+    </div>
+  );
+}
+
+// Child 1: receives value and setter as props
+function SearchInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <input
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder="Filter..."
+    />
+  );
+}
+
+// Child 2: receives only the filtered result
+function ResultList({ items }: { items: string[] }) {
+  return (
+    <ul>
+      {items.map(item => <li key={item}>{item}</li>)}
+    </ul>
+  );
+}`}
+  annotations={[
+    { line: 5, label: 'State in the parent', explanation: 'query lives in FilterList, not in SearchInput. This makes FilterList the single source of truth — it can filter the list without SearchInput knowing ResultList even exists.' },
+    { line: 12, label: 'Setter passed as prop', explanation: 'onChange is the setQuery function passed down. SearchInput calls it when the user types — the parent updates state, React re-renders both children with the new value.' },
+    { line: 7, label: 'Derived filtering', explanation: 'filtered is computed inline from items and query. When either changes, React re-renders and the list updates. No useEffect, no synchronisation bugs.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Lifting state"
+  realWorld="A shared whiteboard in a meeting room"
+  analogy="Instead of each person keeping their own notes and trying to stay in sync, everyone writes on the same whiteboard. The room owns the board — everyone reads from it and anyone can update it. Lifting state gives your components the same shared whiteboard."
+/>
+
+<DangerZone
+  title="Avoid duplicating state across siblings"
+  wrong={`function Sidebar() {\n  const [selected, setSelected] = useState(null);\n  // ...\n}\n\nfunction MainPanel() {\n  const [selected, setSelected] = useState(null);\n  // These will immediately diverge — no link between them\n}`}
+  right={`function App() {\n  const [selected, setSelected] = useState(null); // Single source\n  return (\n    <>\n      <Sidebar selected={selected} onSelect={setSelected} />\n      <MainPanel selected={selected} />\n    </>\n  );\n}`}
+  explanation="Sibling components that each manage their own copy of the same data will drift out of sync the moment either one changes. Lift the state to their common parent and pass it down — then there is only one truth to update."
+/>

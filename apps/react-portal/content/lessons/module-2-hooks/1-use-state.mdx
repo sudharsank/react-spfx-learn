@@ -1,0 +1,48 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="useState: the foundation of interactivity in React"
+  summary="useState returns a pair — the current value and a setter function. Calling the setter triggers a re-render with the new value. State is local to each component instance."
+  variant="highlight"
+/>
+
+## What useState returns
+
+<AnnotatedCode
+  title="Counter.tsx"
+  language="tsx"
+  code={`import { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  function handleIncrement() {
+    setCount(c => c + 1);
+  }
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleIncrement}>+1</button>
+    </div>
+  );
+}`}
+  annotations={[
+    { line: 4, label: 'Array destructuring', explanation: 'useState returns [currentValue, setter]. By convention, name them [value, setValue]. The 0 is the initial value — used only on the first render.' },
+    { line: 7, label: 'Functional update', explanation: 'setCount(c => c + 1) passes a function instead of a value. React guarantees c is the latest state — critical when multiple updates happen in the same event.' },
+    { line: 11, label: 'State in JSX', explanation: '{count} reads the current state. Every time setCount is called, React re-renders Counter and this value reflects the new count.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="useState re-render cycle"
+  realWorld="A whiteboard with a refresh button"
+  analogy="Imagine your component is drawn on a whiteboard. Every time you press Refresh (call the setter), React erases the board and redraws it with the new values — but it is smart enough to only update the parts that actually changed."
+/>
+
+<DangerZone
+  title="Never mutate state directly"
+  wrong={`function BadCounter() {\n  const [items, setItems] = useState([]);\n\n  function addItem() {\n    items.push('new item'); // Mutation — React will NOT re-render\n    setItems(items);       // Same reference, no change detected\n  }\n}`}
+  right={`function GoodCounter() {\n  const [items, setItems] = useState([]);\n\n  function addItem() {\n    setItems(prev => [...prev, 'new item']); // New array = new reference\n  }\n}`}
+  explanation="React detects state changes by reference equality. Mutating an array or object in place leaves the reference unchanged, so React sees no change and skips the re-render. Always create a new value — use spread, map, filter, or Object.assign."
+/>

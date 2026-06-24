@@ -1,0 +1,61 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="Custom hooks: extracting and sharing stateful logic"
+  summary="A custom hook is a function whose name starts with 'use' that can call other hooks. They let you extract duplicated useState + useEffect logic into a single reusable function."
+  variant="highlight"
+/>
+
+## Building a custom hook
+
+<AnnotatedCode
+  title="useWindowSize.ts"
+  language="tsx"
+  code={`import { useState, useEffect } from 'react';
+
+interface WindowSize {
+  width: number;
+  height: number;
+}
+
+export function useWindowSize(): WindowSize {
+  const [size, setSize] = useState<WindowSize>({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return size;
+}
+
+// Usage — any component can now get live window dimensions
+function ResponsiveLayout() {
+  const { width } = useWindowSize();
+  return <p>Viewport: {width}px</p>;
+}`}
+  annotations={[
+    { line: 8, label: 'use prefix is required', explanation: 'The name must start with "use" — this signals to React (and linters) that this function can call hooks. React enforces the Rules of Hooks based on this naming convention.' },
+    { line: 14, label: 'Hooks inside hooks', explanation: 'Custom hooks can call useState, useEffect, and other custom hooks. The logic runs in the calling component — each component instance gets its own isolated copy of the state.' },
+    { line: 22, label: 'Return values freely', explanation: 'Unlike components, hooks can return any value — a single value, an array, or an object. Design the return type to match how callers will use it.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Custom hooks"
+  realWorld="A shared recipe in a cookbook"
+  analogy="Instead of every chef repeating the same sauce recipe from scratch, you write it once in the cookbook. Each chef (component) follows the same recipe but makes their own independent batch — custom hooks work exactly the same way."
+/>
+
+<DangerZone
+  title="Custom hooks must follow the Rules of Hooks"
+  wrong={`// Never call hooks conditionally — even inside a custom hook\nfunction useBadHook(enabled: boolean) {\n  if (enabled) {\n    const [x, setX] = useState(0); // Rules violation: conditional hook call\n  }\n}`}
+  right={`// Gate the logic, not the hook call\nfunction useGoodHook(enabled: boolean) {\n  const [x, setX] = useState(0); // Always called\n  useEffect(() => {\n    if (!enabled) return; // Early return inside effect is fine\n    // do something\n  }, [enabled]);\n  return x;\n}`}
+  explanation="The Rules of Hooks apply inside custom hooks too — never call hooks inside conditions, loops, or nested functions. React tracks hooks by call order; conditional calls break that order and cause unpredictable bugs."
+/>

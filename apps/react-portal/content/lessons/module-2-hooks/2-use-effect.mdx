@@ -1,0 +1,58 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="useEffect: synchronising with the outside world"
+  summary="useEffect runs side effects after React renders. It has three forms depending on the dependency array — no array (every render), empty array (mount/unmount only), or a list of dependencies."
+/>
+
+## The three forms of useEffect
+
+<AnnotatedCode
+  title="effect-forms.tsx"
+  language="tsx"
+  code={`import { useState, useEffect } from 'react';
+
+function DataFetcher({ userId }: { userId: string }) {
+  const [user, setUser] = useState(null);
+
+  // Form 1: no dependency array — runs after every render
+  useEffect(() => {
+    document.title = 'App is rendering';
+  });
+
+  // Form 2: empty array — runs once after mount, cleanup on unmount
+  useEffect(() => {
+    const handler = () => console.log('resized');
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
+  // Form 3: dependency array — runs when userId changes
+  useEffect(() => {
+    fetch(\`/api/users/\${userId}\`)
+      .then(r => r.json())
+      .then(setUser);
+  }, [userId]);
+
+  return <div>{user ? user.name : 'Loading...'}</div>;
+}`}
+  annotations={[
+    { line: 7, label: 'No deps — every render', explanation: 'Without a dependency array, the effect runs after every render. Use sparingly — most effects should not run this often.' },
+    { line: 12, label: 'Cleanup function', explanation: 'Return a function to clean up subscriptions, timers, or event listeners. React calls it before the next effect run and on unmount.' },
+    { line: 15, label: 'Empty array — mount only', explanation: '[] means "run once when the component mounts." The cleanup runs on unmount. Perfect for one-time subscriptions.' },
+    { line: 19, label: 'With deps — targeted runs', explanation: '[userId] means "re-run whenever userId changes." React compares each dep with Object.is — if any changes, the effect runs again.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="useEffect dependency array"
+  realWorld="A smart alarm clock"
+  analogy="The dependency array is like setting conditions on an alarm. No array: it rings every morning. Empty array: it rings once and never again. With deps: it rings only when the conditions you specified change."
+/>
+
+<DangerZone
+  title="Missing dependencies cause stale closures"
+  wrong={`function SearchBox() {\n  const [query, setQuery] = useState('');\n\n  useEffect(() => {\n    fetch('/api/search?q=' + query) // query captured at mount\n      .then(r => r.json())\n      .then(console.log);\n  }, []); // Bug: query never changes here, always uses initial ''\n}`}
+  right={`function SearchBox() {\n  const [query, setQuery] = useState('');\n\n  useEffect(() => {\n    fetch('/api/search?q=' + query)\n      .then(r => r.json())\n      .then(console.log);\n  }, [query]); // Correct: effect re-runs when query changes\n}`}
+  explanation="A closure inside useEffect captures variables at the time it was created. If you omit a dependency, the effect sees a stale value forever. The eslint-plugin-react-hooks exhaustive-deps rule catches this automatically — enable it."
+/>

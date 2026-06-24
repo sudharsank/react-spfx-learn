@@ -1,0 +1,52 @@
+import { ConceptCard, AnnotatedCode, AnalogyBridge, DangerZone } from '@repo/ui';
+
+<ConceptCard
+  title="Props are read-only inputs; state is local and mutable"
+  summary="Props flow from parent to child and cannot be changed by the receiving component. State lives inside a component and can only be changed by that component via its setter. Knowing which to use keeps your code predictable."
+/>
+
+## Props vs state at a glance
+
+<AnnotatedCode
+  title="ProductCard.tsx"
+  language="tsx"
+  code={`interface ProductCardProps {
+  name: string;
+  price: number;
+  currency?: string;
+}
+
+function ProductCard({ name, price, currency = 'USD' }: ProductCardProps) {
+  // State: local, mutable — the component controls this
+  const [quantity, setQuantity] = useState(1);
+
+  // Derived value: compute from props, no state needed
+  const total = price * quantity;
+
+  return (
+    <div>
+      <h3>{name}</h3>
+      <p>{currency} {price.toFixed(2)} × {quantity} = {total.toFixed(2)}</p>
+      <button onClick={() => setQuantity(q => q + 1)}>Add one</button>
+    </div>
+  );
+}`}
+  annotations={[
+    { line: 1, label: 'Props interface', explanation: 'name and price come from the parent — this component cannot change them. currency has a default, but it is still read-only.' },
+    { line: 9, label: 'Local state', explanation: 'quantity is local — only this component manages it. The parent knows nothing about it. That is intentional: keep state as close to where it is used as possible.' },
+    { line: 12, label: 'Derived value', explanation: 'total is computed from price * quantity. It does not need its own state — it updates automatically whenever price or quantity changes.' },
+  ]}
+/>
+
+<AnalogyBridge
+  concept="Props vs state"
+  realWorld="A restaurant menu vs. your order"
+  analogy="Props are the menu — set by the kitchen, readable by the customer, unchangeable at the table. State is your current order — you can modify it as much as you like, and it only affects your table."
+/>
+
+<DangerZone
+  title="Do not store derived data in state"
+  wrong={`function PriceDisplay({ price, quantity }) {\n  const [total, setTotal] = useState(price * quantity);\n\n  // Bug: total is stale whenever price or quantity changes\n  return <p>Total: {total}</p>;\n}`}
+  right={`function PriceDisplay({ price, quantity }) {\n  // Compute inline — always fresh, zero extra state\n  const total = price * quantity;\n  return <p>Total: {total}</p>;\n}`}
+  explanation="Storing a value in state that can be computed from existing props or state introduces a second source of truth. These drift out of sync and cause subtle bugs. Compute it inline instead — React re-renders fast enough that this is never a performance problem at this scale."
+/>
