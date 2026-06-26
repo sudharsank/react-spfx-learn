@@ -1,17 +1,12 @@
 import Phaser from 'phaser';
 
 export class BadgeMomentScene extends Phaser.Scene {
-  private badgeText?: string;
-
   constructor() { super({ key: 'BadgeMomentScene' }); }
-
-  init(data: { badge: string }) {
-    this.badgeText = data.badge ?? '🏅';
-  }
 
   create() {
     const W = this.scale.width;
     const H = this.scale.height;
+    const badge = (this.game as any).__badgeEmoji ?? '🏅';
 
     // Create particle texture
     const g = this.make.graphics({ x: 0, y: 0 }, false);
@@ -32,11 +27,11 @@ export class BadgeMomentScene extends Phaser.Scene {
     this.time.delayedCall(400, () => emitter.stop());
 
     // Badge
-    const badge = this.add
-      .text(W / 2, H / 2, this.badgeText ?? '🏅', { fontSize: '56px' })
+    const badgeText = this.add
+      .text(W / 2, H / 2, badge, { fontSize: '56px' })
       .setOrigin(0.5)
       .setAlpha(0)
       .setScale(0.2);
-    this.tweens.add({ targets: badge, alpha: 1, scale: 1, duration: 500, ease: 'Back.easeOut' });
+    this.tweens.add({ targets: badgeText, alpha: 1, scale: 1, duration: 500, ease: 'Back.easeOut' });
   }
 }
