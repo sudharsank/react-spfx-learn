@@ -2,9 +2,16 @@
 
 import Link from 'next/link';
 import { useAuth } from '@repo/auth';
+import { getHintTokens } from '@repo/adaptive';
+import { useEffect, useState } from 'react';
 
 export function Header() {
   const { user, signInWithGitHub, signInWithMicrosoft, signOut } = useAuth();
+  const [tokens, setTokens] = useState<number>(10);
+
+  useEffect(() => {
+    setTokens(getHintTokens());
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
@@ -16,9 +23,15 @@ export function Header() {
           <Link href="/learn" className="text-sm text-gray-600 hover:text-[var(--color-brand)]">
             Lessons
           </Link>
+          <Link href="/labs" className="text-sm text-gray-600 hover:text-[var(--color-brand)]">
+            Labs
+          </Link>
           <Link href="/playground" className="text-sm text-gray-600 hover:text-[var(--color-brand)]">
             Playground
           </Link>
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[oklch(0.97_0.02_60)] border border-[var(--color-warning)] text-[var(--color-warning)] font-medium">
+            💡 {tokens}
+          </span>
           {user ? (
             <button
               onClick={signOut}
