@@ -50,9 +50,6 @@ export function checkBadge(event: BadgeEvent, earned: string[]): BadgeDefinition
         return badge;
       }
     }
-    if (badge.id === 'first-lesson' && event.type === 'lesson' && earned.length === 0) {
-      return badge;
-    }
   }
   return null;
 }
