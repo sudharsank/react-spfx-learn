@@ -4,7 +4,7 @@
 import { useState, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import { HintCard } from '@repo/ui';
-import { consumeHintToken, getHintTokens } from '@repo/adaptive';
+import { consumeHintToken, getHintTokens, useAdaptive } from '@repo/adaptive';
 import type { LabDefinition } from '../content/labs';
 
 const PREVIEW_WRAP = (code: string) => `<!DOCTYPE html>
@@ -26,6 +26,7 @@ export function GuidedLab({ lab }: { lab: LabDefinition }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [tokenBalance, setTokenBalance] = useState(getHintTokens);
+  const { onLabComplete } = useAdaptive('react');
   const steps = lab.steps ?? [];
 
   const runCode = useCallback(() => {
@@ -33,7 +34,11 @@ export function GuidedLab({ lab }: { lab: LabDefinition }) {
   }, [code]);
 
   const markStepDone = (i: number) => {
-    setCompletedSteps((prev) => prev.includes(i) ? prev : [...prev, i]);
+    const next = completedSteps.includes(i) ? completedSteps : [...completedSteps, i];
+    setCompletedSteps(next);
+    if (next.length === steps.length) {
+      onLabComplete(lab.slug);
+    }
     if (i + 1 < steps.length) setCurrentStep(i + 1);
   };
 

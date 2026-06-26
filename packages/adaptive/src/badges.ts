@@ -38,7 +38,9 @@ export function awardBadge(id: string): string[] {
   const current = getEarnedBadges();
   if (current.includes(id)) return current;
   const updated = [...current, id];
-  localStorage.setItem(BADGE_KEY, JSON.stringify(updated));
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(BADGE_KEY, JSON.stringify(updated));
+  }
   return updated;
 }
 

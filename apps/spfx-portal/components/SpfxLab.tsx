@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { consumeHintToken, getHintTokens } from '@repo/adaptive';
+import { consumeHintToken, getHintTokens, useAdaptive } from '@repo/adaptive';
 import type { SpfxLabDefinition } from '../content/labs';
 
 export function SpfxLab({ lab }: { lab: SpfxLabDefinition }) {
@@ -10,10 +10,13 @@ export function SpfxLab({ lab }: { lab: SpfxLabDefinition }) {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [tokenBalance, setTokenBalance] = useState(getHintTokens);
   const [revealedHints, setRevealedHints] = useState<number[]>([]);
+  const { onLabComplete } = useAdaptive('spfx');
   const steps = lab.steps ?? [];
 
   const markDone = (i: number) => {
-    setCompletedSteps((prev) => prev.includes(i) ? prev : [...prev, i]);
+    const next = completedSteps.includes(i) ? completedSteps : [...completedSteps, i];
+    setCompletedSteps(next);
+    if (next.length === steps.length) onLabComplete(lab.slug);
     if (i + 1 < steps.length) setCurrentStep(i + 1);
   };
 

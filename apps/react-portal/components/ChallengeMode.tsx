@@ -3,7 +3,7 @@
 
 import { useState, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
-import { consumeHintToken, getHintTokens } from '@repo/adaptive';
+import { consumeHintToken, getHintTokens, useAdaptive } from '@repo/adaptive';
 import type { LabDefinition } from '../content/labs';
 
 const PREVIEW_WRAP = (code: string) => `<!DOCTYPE html>
@@ -24,6 +24,8 @@ export function ChallengeMode({ lab }: { lab: LabDefinition }) {
   const [preview, setPreview] = useState(PREVIEW_WRAP(lab.starterCode));
   const [tokenBalance, setTokenBalance] = useState(getHintTokens);
   const [showHint, setShowHint] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const { onLabComplete } = useAdaptive('react');
 
   const runCode = useCallback(() => setPreview(PREVIEW_WRAP(code)), [code]);
 
@@ -61,6 +63,13 @@ export function ChallengeMode({ lab }: { lab: LabDefinition }) {
             <p>Use <code className="bg-white px-1 rounded">React.useState</code> for the timer value and a boolean for running state. In <code className="bg-white px-1 rounded">useEffect</code>, start a <code className="bg-white px-1 rounded">setInterval</code> when running is true — remember to return a cleanup function that calls <code className="bg-white px-1 rounded">clearInterval</code>.</p>
           </div>
         )}
+        <button
+          onClick={() => { onLabComplete(lab.slug); setSubmitted(true); }}
+          disabled={submitted}
+          className="w-full mt-4 px-4 py-2 rounded-lg bg-[var(--color-accent)] text-white text-sm font-medium hover:opacity-90 disabled:opacity-50"
+        >
+          {submitted ? '✓ Submitted' : 'Submit Solution'}
+        </button>
       </aside>
 
       {/* Editor */}
