@@ -46,3 +46,23 @@ function Counter() {
   right={`function GoodCounter() {\n  const [items, setItems] = useState([]);\n\n  function addItem() {\n    setItems(prev => [...prev, 'new item']); // New array = new reference\n  }\n}`}
   explanation="React detects state changes by reference equality. Mutating an array or object in place leaves the reference unchanged, so React sees no change and skips the re-render. Always create a new value — use spread, map, filter, or Object.assign."
 />
+
+## Try It: Your First useState
+
+<TryItInline
+  defaultCode={`function App() {
+  const [count, setCount] = React.useState(0);
+  return (
+    <div style={{textAlign:'center', marginTop:'40px', fontFamily:'system-ui'}}>
+      <h2 style={{fontSize:'2rem'}}>{count}</h2>
+      <button onClick={() => setCount(count + 1)} style={{padding:'8px 20px', fontSize:'1rem', cursor:'pointer'}}>
+        Click me!
+      </button>
+    </div>
+  );
+}`}
+/>
+
+<DeepDive title="How useState works internally">
+Each call to useState during a render is tracked by position in a linked list (called "fiber hooks"). React knows which state belongs to which useState call because React rules enforce that hooks are always called in the same order — which is why you can never put useState inside an if block.
+</DeepDive>

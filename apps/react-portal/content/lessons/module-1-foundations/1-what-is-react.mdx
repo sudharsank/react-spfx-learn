@@ -25,3 +25,33 @@ React is a JavaScript library for building user interfaces. It was created by Fa
 React solves the problem of keeping your UI in sync with your data. Instead of manually updating the DOM every time something changes, React does it for you.
 
 *This lesson will be expanded with interactive examples, quizzes, and analogies in the next task.*
+
+## How React Renders
+
+Watch how a state change flows through React's render pipeline:
+
+<MicroAnimation scene="render-cycle" />
+
+## Topic Map
+
+<ConceptMap
+  nodes={[
+    { id: 'react', label: 'React', active: true, x: 160, y: 20 },
+    { id: 'components', label: 'Components', x: 60, y: 100 },
+    { id: 'props', label: 'Props', x: 160, y: 100 },
+    { id: 'state', label: 'State', x: 260, y: 100 },
+    { id: 'hooks', label: 'Hooks', x: 260, y: 180 },
+    { id: 'vdom', label: 'Virtual DOM', x: 60, y: 180 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'react', target: 'components' },
+    { id: 'e2', source: 'react', target: 'props' },
+    { id: 'e3', source: 'react', target: 'state' },
+    { id: 'e4', source: 'state', target: 'hooks' },
+    { id: 'e5', source: 'react', target: 'vdom' },
+  ]}
+/>
+
+<DeepDive title="Why Virtual DOM?">
+The Virtual DOM is an in-memory representation of the real DOM. React computes the diff between the previous Virtual DOM tree and the new one (reconciliation), then applies only the minimal set of changes to the real DOM. This is called the "commit phase". The key insight: DOM mutations are expensive; JavaScript object comparisons are cheap.
+</DeepDive>
