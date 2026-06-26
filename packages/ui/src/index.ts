@@ -4,3 +4,5 @@ export { QuizBlock } from './components/QuizBlock';
 export { AnalogyBridge } from './components/AnalogyBridge';
 export { DangerZone } from './components/DangerZone';
 export { DeepDive } from './components/DeepDive';
+export { VideoEmbed } from './components/VideoEmbed';
+export { TryItInline } from './components/TryItInline';
