@@ -8,3 +8,4 @@ export { VideoEmbed } from './components/VideoEmbed';
 export { TryItInline } from './components/TryItInline';
 export { ConceptMap } from './components/ConceptMap';
 export type { ConceptNode, ConceptEdge } from './components/ConceptMap';
+export { HintCard } from './components/HintCard';
