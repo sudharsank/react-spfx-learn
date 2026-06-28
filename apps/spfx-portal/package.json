@@ -12,11 +12,12 @@
   "dependencies": {
     "@mdx-js/loader": "latest",
     "@mdx-js/react": "latest",
+    "@monaco-editor/react": "^4.7.0",
     "@next/mdx": "latest",
     "@repo/adaptive": "workspace:*",
-    "@repo/phaser": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/content": "workspace:*",
+    "@repo/phaser": "workspace:*",
     "@repo/ui": "workspace:*",
     "gray-matter": "^4.0.3",
     "next": "^15.1.0",

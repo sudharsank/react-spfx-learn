@@ -87,6 +87,9 @@ importers:
       '@mdx-js/react':
         specifier: latest
         version: 3.1.1(@types/react@19.2.17)(react@19.2.7)
+      '@monaco-editor/react':
+        specifier: ^4.7.0
+        version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@next/mdx':
         specifier: latest
         version: 16.2.9(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))
