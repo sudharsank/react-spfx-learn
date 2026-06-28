@@ -98,3 +98,27 @@ export default class HelloWorldWebPart extends BaseClientSideWebPart<{}> {
   realWorld="A picture frame vs. the picture inside"
   analogy="The web part class (HelloWorldWebPart.ts) is the frame — it handles SharePoint's lifecycle, property pane, and permissions. The React component (HelloWorld.tsx) is the picture — it handles what the user sees and interacts with. SPFx keeps them separate so you can swap the picture without changing the frame."
 />
+
+## Scaffolded Project Structure
+
+<ConceptMap
+  nodes={[
+    { id: 'src', label: 'src/', active: true, x: 160, y: 0 },
+    { id: 'webparts', label: 'webparts/', x: 60, y: 100 },
+    { id: 'components', label: 'components/', x: 260, y: 100 },
+    { id: 'wp', label: 'HelloWorldWebPart.ts', x: 60, y: 200 },
+    { id: 'manifest', label: 'manifest.json', x: 0, y: 300 },
+    { id: 'helloworld', label: 'HelloWorld.tsx', x: 260, y: 200 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'src', target: 'webparts' },
+    { id: 'e2', source: 'src', target: 'components' },
+    { id: 'e3', source: 'webparts', target: 'wp' },
+    { id: 'e4', source: 'wp', target: 'manifest', label: 'has' },
+    { id: 'e5', source: 'components', target: 'helloworld' },
+  ]}
+/>
+
+<DeepDive title="config/ folder — what each file controls">
+  The `config/` folder has four key files: `package-solution.json` controls your app package version and whether it is tenant-wide or site-collection-scoped; `deploy-azure-storage.json` is for CDN hosting (rarely needed for SharePoint Online); `serve.json` tells `heft start` which SharePoint site URL to open for local testing; `write-manifests.json` controls where Heft writes the final bundle manifests. You will edit `package-solution.json` on every release to bump the version.
+</DeepDive>

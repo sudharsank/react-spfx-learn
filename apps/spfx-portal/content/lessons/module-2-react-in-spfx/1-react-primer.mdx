@@ -73,3 +73,28 @@ import * as React from 'react';
 const { useState, useEffect } = React;`}
   explanation="SPFx generators produce namespace imports (import * as React). While named imports work in React 19, mixing patterns in the same project can confuse older SPFx tooling. Stick to the namespace pattern for consistency."
 />
+
+## React in SPFx vs Standalone React
+
+<MicroAnimation scene="render-cycle" />
+
+<ConceptMap
+  nodes={[
+    { id: 'standalone', label: 'Standalone React', x: 60, y: 0 },
+    { id: 'spfx', label: 'React in SPFx', active: true, x: 260, y: 0 },
+    { id: 'cra', label: 'index.tsx entrypoint', x: 60, y: 110 },
+    { id: 'wp', label: 'render() in WebPart', x: 260, y: 110 },
+    { id: 'div', label: 'document.getElementById()', x: 60, y: 220 },
+    { id: 'dome', label: 'this.domElement', x: 260, y: 220 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'standalone', target: 'cra' },
+    { id: 'e2', source: 'spfx', target: 'wp' },
+    { id: 'e3', source: 'cra', target: 'div', label: 'mounts into' },
+    { id: 'e4', source: 'wp', target: 'dome', label: 'mounts into' },
+  ]}
+/>
+
+<DeepDive title="React version inside SPFx">
+  SPFx 1.21 ships with React 17 internally. You can use React 18 or 19 by adding it as a dependency and adjusting your webpack config, but the SPFx team only tests against the bundled version. For production web parts, stick with the SPFx-bundled React unless you have a specific reason to upgrade, to avoid bundle size increases from shipping a second copy of React.
+</DeepDive>

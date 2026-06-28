@@ -76,3 +76,27 @@ https://yourtenant.sharepoint.com/_layouts/15/workbench.aspx
 https://yourtenant.sharepoint.com/sites/yoursite/SitePages/Home.aspx?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/manifests.js`}
   explanation="The hosted workbench was never a complete SharePoint environment. It could not run real SharePoint API calls correctly. Always test on a real SharePoint page using the Debug Toolbar approach."
 />
+
+## Web Part Lifecycle
+
+<MicroAnimation scene="spfx-request-flow" />
+
+<ConceptMap
+  nodes={[
+    { id: 'manifest', label: 'manifest.json', active: true, x: 0, y: 60 },
+    { id: 'bundle', label: '.js bundle', x: 160, y: 60 },
+    { id: 'init', label: 'onInit()', x: 320, y: 0 },
+    { id: 'render', label: 'render()', x: 320, y: 60 },
+    { id: 'dispose', label: 'onDispose()', x: 320, y: 120 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'manifest', target: 'bundle', label: 'points to' },
+    { id: 'e2', source: 'bundle', target: 'init', label: '1st' },
+    { id: 'e3', source: 'bundle', target: 'render', label: '2nd' },
+    { id: 'e4', source: 'bundle', target: 'dispose', label: 'on unload' },
+  ]}
+/>
+
+<DeepDive title="What lives in manifest.json">
+  Every SPFx web part has a `<webpartname>.manifest.json` file that SharePoint reads before loading your bundle. It declares the component ID (a GUID), the display name shown in the web part toolbox, the preconfigured entries (default property values), and the bundle path. The GUID must be unique and stable — changing it after deployment breaks existing page references.
+</DeepDive>

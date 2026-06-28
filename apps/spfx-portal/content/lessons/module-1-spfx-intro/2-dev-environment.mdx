@@ -44,3 +44,25 @@ gulp serve   # This was the old workflow — it no longer works`}
 heft build   # Production build (replaces gulp build)`}
   explanation="If you follow an older tutorial that says 'npm install -g gulp' and 'gulp serve', stop. As of SPFx 1.22, the Heft toolchain fully replaces gulp. Installing gulp globally can cause version conflicts."
 />
+
+## SPFx Toolchain
+
+<ConceptMap
+  nodes={[
+    { id: 'node', label: 'Node.js 22 LTS', active: true, x: 160, y: 0 },
+    { id: 'yo', label: 'Yeoman + SPFx generator', x: 60, y: 100 },
+    { id: 'gulp', label: 'Gulp 4', x: 260, y: 100 },
+    { id: 'heft', label: 'Heft (Rush Stack)', x: 160, y: 100 },
+    { id: 'webpack', label: 'Webpack 5', x: 160, y: 200 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'node', target: 'yo', label: 'runs' },
+    { id: 'e2', source: 'node', target: 'heft', label: 'runs' },
+    { id: 'e3', source: 'heft', target: 'webpack', label: 'orchestrates' },
+    { id: 'e4', source: 'node', target: 'gulp', label: 'runs (legacy)' },
+  ]}
+/>
+
+<DeepDive title="Why Node 22 LTS and not the latest?">
+  SPFx 1.21+ officially supports Node.js 22 LTS. The SPFx toolchain pins to specific Node versions because the Yeoman generator, Heft, and Webpack have transitive dependencies that fail on odd-numbered (non-LTS) releases. Always check the SPFx release notes for the supported Node range before upgrading. Use `nvm` (macOS/Linux) or `nvs` (Windows) to switch between Node versions per-project.
+</DeepDive>

@@ -80,3 +80,29 @@ https://yourtenant.sharepoint.com/_layouts/15/workbench.aspx
 https://yourtenant.sharepoint.com/sites/yoursite/SitePages/Home.aspx?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/manifests.js`}
   explanation="The hosted workbench is a legacy tool that cannot replicate real SharePoint context, permissions, or navigation. All SPFx testing should be done on real SharePoint pages using the Debug Toolbar approach."
 />
+
+## Deployment Pipeline
+
+<MicroAnimation scene="spfx-request-flow" />
+
+<ConceptMap
+  nodes={[
+    { id: 'sppkg', label: '.sppkg file', active: true, x: 0, y: 60 },
+    { id: 'catalog', label: 'App Catalog', x: 160, y: 60 },
+    { id: 'api', label: 'API Permissions', x: 320, y: 0 },
+    { id: 'deploy', label: 'Tenant Deploy', x: 320, y: 60 },
+    { id: 'site', label: 'Add to Site', x: 480, y: 60 },
+    { id: 'page', label: 'Add to Page', x: 640, y: 60 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'sppkg', target: 'catalog', label: 'upload' },
+    { id: 'e2', source: 'catalog', target: 'api', label: 'review' },
+    { id: 'e3', source: 'catalog', target: 'deploy', label: 'approve' },
+    { id: 'e4', source: 'deploy', target: 'site', label: 'then' },
+    { id: 'e5', source: 'site', target: 'page', label: 'then' },
+  ]}
+/>
+
+<DeepDive title="Tenant-wide vs manual site deployment">
+  When you check **Make this solution available to all sites in the organization** in the App Catalog, SharePoint automatically makes the web part available in every site's web part toolbox — no "Add an app" step required on each site. Without this flag, admins must visit each site and add the app manually. Tenant-wide deployment is the right choice for most enterprise web parts. The downside: you cannot roll back to a site-by-site basis once tenant-wide is enabled without removing the solution entirely.
+</DeepDive>

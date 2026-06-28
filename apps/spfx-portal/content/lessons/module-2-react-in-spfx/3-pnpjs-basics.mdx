@@ -103,3 +103,27 @@ const HelloWorld: React.FC<{ sp: any }> = ({ sp }) => {
 }`}
   explanation="The SPFx lifecycle initialises this.context during onInit(). In the constructor, this.context is undefined. Calling SharePoint API in the constructor will throw a runtime error."
 />
+
+## PnPjs Request Flow
+
+<MicroAnimation scene="spfx-request-flow" />
+
+<ConceptMap
+  nodes={[
+    { id: 'pnp', label: 'PnPjs', active: true, x: 160, y: 0 },
+    { id: 'sp', label: '@pnp/sp', x: 60, y: 100 },
+    { id: 'graph', label: '@pnp/graph', x: 260, y: 100 },
+    { id: 'spRest', label: 'SP REST API', x: 60, y: 200 },
+    { id: 'graphApi', label: 'MS Graph API', x: 260, y: 200 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'pnp', target: 'sp', label: 'includes' },
+    { id: 'e2', source: 'pnp', target: 'graph', label: 'includes' },
+    { id: 'e3', source: 'sp', target: 'spRest', label: 'wraps' },
+    { id: 'e4', source: 'graph', target: 'graphApi', label: 'wraps' },
+  ]}
+/>
+
+<DeepDive title="Why initialize PnPjs in onInit, not in the component">
+  PnPjs needs the SPFx `context` object to read the current site URL and attach the user's authentication token to every request. The `context` is only available in your `BaseClientSideWebPart` class. Initialize PnPjs once in `onInit()`, then pass a preconfigured `sp` instance to your React components as a prop. Initializing PnPjs inside a React component risks creating multiple unconfigured instances.
+</DeepDive>

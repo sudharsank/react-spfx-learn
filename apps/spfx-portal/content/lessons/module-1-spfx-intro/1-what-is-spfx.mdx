@@ -55,3 +55,27 @@ export default class HelloWorldWebPart extends BaseClientSideWebPart {
 // This is the only supported client-side model going forward`}
   explanation="SharePoint Add-ins (formerly 'Apps for SharePoint') are deprecated. Any tutorial referencing the 'app model', 'provider-hosted apps', or 'SharePoint-hosted apps' is outdated. Only use SPFx for new SharePoint customisations."
 />
+
+## SPFx Request Flow
+
+<MicroAnimation scene="spfx-request-flow" />
+
+<ConceptMap
+  nodes={[
+    { id: 'sp', label: 'SharePoint Page', active: true, x: 0, y: 60 },
+    { id: 'wp', label: 'Web Part instance', x: 160, y: 60 },
+    { id: 'react', label: 'React tree', x: 320, y: 60 },
+    { id: 'graph', label: 'Graph API', x: 320, y: 160 },
+    { id: 'dom', label: 'DOM element', x: 480, y: 60 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'sp', target: 'wp', label: 'loads' },
+    { id: 'e2', source: 'wp', target: 'react', label: 'mounts' },
+    { id: 'e3', source: 'react', target: 'graph', label: 'calls' },
+    { id: 'e4', source: 'react', target: 'dom', label: 'renders into' },
+  ]}
+/>
+
+<DeepDive title="The SPFx load lifecycle in detail">
+  When SharePoint renders a page, it reads the page's manifest JSON to discover which web parts are included. It downloads your `.js` bundle, calls your web part class's `onInit()` method (where you can set up services like PnPjs), then calls `render()` which is where you mount your React tree. On page unload, `onDispose()` is called — this is where you should call `ReactDom.unmountComponentAtNode(this.domElement)` to prevent memory leaks.
+</DeepDive>

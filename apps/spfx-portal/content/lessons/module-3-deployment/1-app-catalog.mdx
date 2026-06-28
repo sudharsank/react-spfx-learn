@@ -61,3 +61,22 @@ When you upload a `.sppkg` file to the App Catalog:
 // 3. Then test your web part — Graph calls will now work`}
   explanation="If your web part uses Microsoft Graph, the Graph API permission requests are queued when you upload the .sppkg. A SharePoint or Global Admin must explicitly approve them in the API Access page before your web part can call Graph."
 />
+
+## App Catalog Scope
+
+<ConceptMap
+  nodes={[
+    { id: 'tenant', label: 'Tenant App Catalog', active: true, x: 160, y: 0 },
+    { id: 'site', label: 'Site Collection Catalog', x: 160, y: 110 },
+    { id: 'all', label: 'All Sites', x: 60, y: 220 },
+    { id: 'one', label: 'One Site Only', x: 260, y: 220 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'tenant', target: 'all', label: 'deploys to' },
+    { id: 'e2', source: 'site', target: 'one', label: 'deploys to' },
+  ]}
+/>
+
+<DeepDive title="Admin consent for API permissions">
+  If your web part calls the Microsoft Graph API, SharePoint requires an admin to explicitly approve each permission scope (e.g. `User.Read`, `Files.Read.All`) in the SharePoint Admin Center under **API Access**. Until approved, API calls fail with a 403. This approval is per-tenant and per-scope — you cannot approve permissions programmatically from the web part itself. Document the required permissions in your web part's README so tenant admins know what to approve.
+</DeepDive>

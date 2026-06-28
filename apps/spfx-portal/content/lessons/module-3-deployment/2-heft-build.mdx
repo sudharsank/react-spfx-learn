@@ -64,3 +64,25 @@ heft clean && heft bundle --production && heft package-solution --production`}
   realWorld="Publishing vs. draft mode in a CMS"
   analogy="heft build is draft mode — fast, readable, points to localhost. heft bundle --production is publish mode — minified, no source maps, CDN URL in the manifest, ready for real users."
 />
+
+## Heft Build Pipeline
+
+<ConceptMap
+  nodes={[
+    { id: 'heft', label: 'heft build', active: true, x: 160, y: 0 },
+    { id: 'ts', label: 'TypeScript compile', x: 60, y: 100 },
+    { id: 'webpack', label: 'Webpack bundle', x: 260, y: 100 },
+    { id: 'manifests', label: 'Write manifests', x: 160, y: 200 },
+    { id: 'sppkg', label: '.sppkg package', x: 160, y: 300 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'heft', target: 'ts', label: 'runs' },
+    { id: 'e2', source: 'heft', target: 'webpack', label: 'runs' },
+    { id: 'e3', source: 'webpack', target: 'manifests', label: 'then' },
+    { id: 'e4', source: 'manifests', target: 'sppkg', label: 'packages into' },
+  ]}
+/>
+
+<DeepDive title="Debug vs production build differences">
+  `heft build` (debug) skips minification and tree-shaking for faster iteration — the resulting bundle is 3–5× larger. `heft build --production` enables full Webpack optimization: minification, dead code elimination, and chunk splitting. Always use `--production` before packaging for upload to the App Catalog. The `.sppkg` file size difference is significant: a production bundle for a typical web part is 100–300 KB, while a debug bundle can exceed 1 MB.
+</DeepDive>
