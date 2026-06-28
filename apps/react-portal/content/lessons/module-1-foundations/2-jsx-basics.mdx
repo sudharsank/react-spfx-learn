@@ -48,3 +48,27 @@ function Button() {
   right={`function List() {\n  return (\n    <>\n      <h2>Shopping List</h2>\n      <ul>...</ul>\n    </>\n  );\n}`}
   explanation="JSX compiles to React.createElement() calls, and a function can only return one value. Wrap siblings in a Fragment (<>) to avoid adding unnecessary DOM nodes."
 />
+
+## JSX Compilation Pipeline
+
+<ConceptMap
+  nodes={[
+    { id: 'jsx', label: 'JSX source', active: true, x: 0, y: 60 },
+    { id: 'compiler', label: 'Babel / SWC', x: 160, y: 60 },
+    { id: 'createEl', label: 'React.createElement()', x: 320, y: 60 },
+    { id: 'vdom', label: 'Virtual DOM', x: 480, y: 60 },
+    { id: 'dom', label: 'Real DOM', x: 640, y: 60 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'jsx', target: 'compiler', label: 'compiles' },
+    { id: 'e2', source: 'compiler', target: 'createEl', label: 'emits' },
+    { id: 'e3', source: 'createEl', target: 'vdom', label: 'builds' },
+    { id: 'e4', source: 'vdom', target: 'dom', label: 'commits' },
+  ]}
+/>
+
+<MicroAnimation scene="component-tree" />
+
+<DeepDive title="What Babel actually outputs for your JSX">
+  JSX like `<h1 className="title">Hello</h1>` compiles to `React.createElement('h1', { className: 'title' }, 'Hello')`. With the new JSX transform (React 17+), it uses `import { jsx as _jsx } from 'react/jsx-runtime'` instead — this is why you no longer need `import React from 'react'` at the top of every file. The compiler handles the import automatically.
+</DeepDive>

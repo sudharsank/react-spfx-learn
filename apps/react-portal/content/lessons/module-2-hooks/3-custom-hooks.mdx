@@ -59,3 +59,45 @@ function ResponsiveLayout() {
   right={`// Gate the logic, not the hook call\nfunction useGoodHook(enabled: boolean) {\n  const [x, setX] = useState(0); // Always called\n  useEffect(() => {\n    if (!enabled) return; // Early return inside effect is fine\n    // do something\n  }, [enabled]);\n  return x;\n}`}
   explanation="The Rules of Hooks apply inside custom hooks too — never call hooks inside conditions, loops, or nested functions. React tracks hooks by call order; conditional calls break that order and cause unpredictable bugs."
 />
+
+## Hook Composition Map
+
+<ConceptMap
+  nodes={[
+    { id: 'custom', label: 'useLocalStorage', active: true, x: 160, y: 0 },
+    { id: 'state', label: 'useState', x: 60, y: 100 },
+    { id: 'effect', label: 'useEffect', x: 260, y: 100 },
+    { id: 'storage', label: 'localStorage', x: 260, y: 200 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'custom', target: 'state', label: 'uses' },
+    { id: 'e2', source: 'custom', target: 'effect', label: 'uses' },
+    { id: 'e3', source: 'effect', target: 'storage', label: 'syncs' },
+  ]}
+/>
+
+<TryItInline
+  defaultCode={`function useCounter(initial = 0) {
+  const [count, setCount] = React.useState(initial);
+  const increment = () => setCount(c => c + 1);
+  const decrement = () => setCount(c => c - 1);
+  const reset = () => setCount(initial);
+  return { count, increment, decrement, reset };
+}
+
+function App() {
+  const { count, increment, decrement, reset } = useCounter(0);
+  return (
+    <div style={{textAlign:'center', marginTop:'40px', fontFamily:'system-ui'}}>
+      <h2 style={{fontSize:'2.5rem', margin:'0 0 16px'}}>{count}</h2>
+      <button onClick={decrement} style={{padding:'8px 20px', fontSize:'1rem', marginRight:'8px'}}>−</button>
+      <button onClick={reset} style={{padding:'8px 20px', fontSize:'1rem', marginRight:'8px'}}>Reset</button>
+      <button onClick={increment} style={{padding:'8px 20px', fontSize:'1rem'}}>+</button>
+    </div>
+  );
+}`}
+/>
+
+<DeepDive title="The Rules of Hooks — why they exist">
+  React tracks hook state using an array indexed by call order. If you put a hook inside an if block, the array index shifts on the next render and React reads the wrong state for every subsequent hook. The linter rule `react-hooks/rules-of-hooks` enforces this statically. Custom hooks are just functions — they inherit the rules because they call the same built-in hooks internally.
+</DeepDive>

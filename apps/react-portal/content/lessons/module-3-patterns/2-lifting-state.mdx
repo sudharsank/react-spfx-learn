@@ -73,3 +73,26 @@ function ResultList({ items }: { items: string[] }) {
   right={`function App() {\n  const [selected, setSelected] = useState(null); // Single source\n  return (\n    <>\n      <Sidebar selected={selected} onSelect={setSelected} />\n      <MainPanel selected={selected} />\n    </>\n  );\n}`}
   explanation="Sibling components that each manage their own copy of the same data will drift out of sync the moment either one changes. Lift the state to their common parent and pass it down — then there is only one truth to update."
 />
+
+## Data Flow: Lifting State Up
+
+<ConceptMap
+  nodes={[
+    { id: 'parent', label: 'Parent (holds state)', active: true, x: 160, y: 0 },
+    { id: 'childA', label: 'Child A (reads)', x: 60, y: 110 },
+    { id: 'childB', label: 'Child B (reads)', x: 260, y: 110 },
+    { id: 'setter', label: 'Setter callback', x: 60, y: 220 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'parent', target: 'childA', label: 'state as prop' },
+    { id: 'e2', source: 'parent', target: 'childB', label: 'state as prop' },
+    { id: 'e3', source: 'childA', target: 'setter', label: 'calls' },
+    { id: 'e4', source: 'setter', target: 'parent', label: 'updates' },
+  ]}
+/>
+
+<MicroAnimation scene="component-tree" />
+
+<DeepDive title="Why not just use a global variable?">
+  A global variable changes do not trigger React re-renders. React only knows to re-render when you call a state setter. Even if the global variable holds the right value, React will still display the stale UI. State lifting keeps data in React's ownership — when the parent's setter is called, React re-renders the parent and all its children automatically, keeping the UI in sync.
+</DeepDive>

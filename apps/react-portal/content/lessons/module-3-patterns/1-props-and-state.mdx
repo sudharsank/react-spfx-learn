@@ -50,3 +50,25 @@ function ProductCard({ name, price, currency = 'USD' }: ProductCardProps) {
   right={`function PriceDisplay({ price, quantity }) {\n  // Compute inline — always fresh, zero extra state\n  const total = price * quantity;\n  return <p>Total: {total}</p>;\n}`}
   explanation="Storing a value in state that can be computed from existing props or state introduces a second source of truth. These drift out of sync and cause subtle bugs. Compute it inline instead — React re-renders fast enough that this is never a performance problem at this scale."
 />
+
+## Re-render Flow
+
+<MicroAnimation scene="render-cycle" />
+
+<ConceptMap
+  nodes={[
+    { id: 'parent', label: 'Parent', x: 160, y: 0 },
+    { id: 'props', label: 'Props (read-only)', active: true, x: 60, y: 100 },
+    { id: 'state', label: 'State (local)', active: true, x: 260, y: 100 },
+    { id: 'render', label: 'Re-render', x: 160, y: 200 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'parent', target: 'props', label: 'passes down' },
+    { id: 'e2', source: 'state', target: 'render', label: 'triggers' },
+    { id: 'e3', source: 'props', target: 'render', label: 'used in' },
+  ]}
+/>
+
+<DeepDive title="When to use props vs state">
+  Use **props** when: the value is decided by the parent, it never changes from the child's perspective, or multiple components need the same data. Use **state** when: the value can change over time due to user interaction, it belongs to exactly one component, and no other component needs to read it. When two sibling components need the same value, lift it to their common parent as state and pass it down as props.
+</DeepDive>

@@ -48,3 +48,29 @@ function UserCard({ name, role, avatarUrl }: UserCardProps) {
   right={`function GoodComponent({ name }) {\n  // Props are read-only — use local state if you need to transform them\n  return <p>{name}</p>;\n}`}
   explanation="Props flow one direction — from parent to child. A component that modifies its own props breaks the predictability that makes React easy to reason about. Use state for values that need to change."
 />
+
+## Component Hierarchy
+
+<MicroAnimation scene="component-tree" />
+
+<ConceptMap
+  nodes={[
+    { id: 'app', label: 'App', active: true, x: 160, y: 0 },
+    { id: 'header', label: 'Header', x: 40, y: 90 },
+    { id: 'main', label: 'Main', x: 160, y: 90 },
+    { id: 'footer', label: 'Footer', x: 280, y: 90 },
+    { id: 'nav', label: 'Nav', x: 40, y: 180 },
+    { id: 'content', label: 'Content', x: 160, y: 180 },
+  ]}
+  edges={[
+    { id: 'e1', source: 'app', target: 'header' },
+    { id: 'e2', source: 'app', target: 'main' },
+    { id: 'e3', source: 'app', target: 'footer' },
+    { id: 'e4', source: 'header', target: 'nav' },
+    { id: 'e5', source: 'main', target: 'content' },
+  ]}
+/>
+
+<DeepDive title="Pure components and why they matter">
+  React assumes your components are pure functions — same props in, same output out, no side effects during render. This lets React safely re-render your component multiple times in development (Strict Mode does exactly this) to surface impurity bugs. If your component has side effects in the render body (like calling an API directly), you will see them triggered twice in development.
+</DeepDive>

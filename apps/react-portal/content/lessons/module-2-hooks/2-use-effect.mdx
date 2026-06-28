@@ -56,3 +56,38 @@ function DataFetcher({ userId }: { userId: string }) {
   right={`function SearchBox() {\n  const [query, setQuery] = useState('');\n\n  useEffect(() => {\n    fetch('/api/search?q=' + query)\n      .then(r => r.json())\n      .then(console.log);\n  }, [query]); // Correct: effect re-runs when query changes\n}`}
   explanation="A closure inside useEffect captures variables at the time it was created. If you omit a dependency, the effect sees a stale value forever. The eslint-plugin-react-hooks exhaustive-deps rule catches this automatically — enable it."
 />
+
+## The Render → Effect Timeline
+
+<MicroAnimation scene="render-cycle" />
+
+## Try It: Timer with cleanup
+
+<TryItInline
+  defaultCode={`function App() {
+  const [seconds, setSeconds] = React.useState(0);
+  const [running, setRunning] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!running) return;
+    const id = setInterval(() => setSeconds(s => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [running]);
+
+  return (
+    <div style={{textAlign:'center', marginTop:'40px', fontFamily:'system-ui'}}>
+      <h2 style={{fontSize:'3rem', margin:'0 0 16px'}}>{seconds}s</h2>
+      <button onClick={() => setRunning(r => !r)} style={{padding:'8px 24px', fontSize:'1rem', cursor:'pointer'}}>
+        {running ? 'Pause' : 'Start'}
+      </button>
+      <button onClick={() => { setRunning(false); setSeconds(0); }} style={{marginLeft:'8px', padding:'8px 24px', fontSize:'1rem', cursor:'pointer'}}>
+        Reset
+      </button>
+    </div>
+  );
+}`}
+/>
+
+<DeepDive title="Why useEffect cleanup prevents memory leaks">
+  Every time React re-runs an effect (because a dependency changed), it calls the cleanup from the previous run first. Without cleanup, you would accumulate stale intervals, event listeners, and subscriptions — each still holding a reference to the old component's closed-over variables. This is one of the most common sources of memory leaks in React apps.
+</DeepDive>
