@@ -17,10 +17,14 @@ export default function SpfxProjectWizard({ project }: { project: SpfxProject })
   useEffect(() => {
     const raw = localStorage.getItem(CK_KEY(project.slug));
     if (raw) {
-      const ck = JSON.parse(raw) as { step: number; completed: number[] };
-      setStep(ck.step);
-      setCompleted(ck.completed);
-      setCode(project.steps[ck.step].code);
+      try {
+        const ck = JSON.parse(raw) as { step: number; completed: number[] };
+        setStep(ck.step);
+        setCompleted(ck.completed);
+        setCode(project.steps[ck.step].code);
+      } catch {
+        localStorage.removeItem(CK_KEY(project.slug));
+      }
     }
   }, [project]);
 

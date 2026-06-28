@@ -34,10 +34,14 @@ export default function ProjectWizard({ project }: { project: Project }) {
   useEffect(() => {
     const raw = localStorage.getItem(CK_KEY(project.slug));
     if (raw) {
-      const ck = JSON.parse(raw) as { step: number; completed: number[] };
-      setStep(ck.step);
-      setCompleted(ck.completed);
-      setCode(project.steps[ck.step].starterCode);
+      try {
+        const ck = JSON.parse(raw) as { step: number; completed: number[] };
+        setStep(ck.step);
+        setCompleted(ck.completed);
+        setCode(project.steps[ck.step].starterCode);
+      } catch {
+        localStorage.removeItem(CK_KEY(project.slug));
+      }
     }
   }, [project]);
 

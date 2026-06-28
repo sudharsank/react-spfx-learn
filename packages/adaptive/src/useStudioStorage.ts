@@ -26,14 +26,26 @@ export function useStudioStorage(portal: 'react' | 'spfx') {
     const supabase = getSupabase();
     if (!supabase) {
       const raw = localStorage.getItem(LS_KEY(portal));
-      setFilesState(raw ? JSON.parse(raw) : []);
+      if (raw) {
+        try {
+          setFilesState(JSON.parse(raw));
+        } catch {
+          localStorage.removeItem(LS_KEY(portal));
+        }
+      }
       setLoading(false);
       return;
     }
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) {
         const raw = localStorage.getItem(LS_KEY(portal));
-        setFilesState(raw ? JSON.parse(raw) : []);
+        if (raw) {
+          try {
+            setFilesState(JSON.parse(raw));
+          } catch {
+            localStorage.removeItem(LS_KEY(portal));
+          }
+        }
         setLoading(false);
         return;
       }
