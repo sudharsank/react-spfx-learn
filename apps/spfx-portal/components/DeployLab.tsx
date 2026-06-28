@@ -12,7 +12,13 @@ export default function DeployLab({ lab }: { lab: IDeployLab }) {
 
   useEffect(() => {
     const raw = localStorage.getItem(CK_KEY(lab.slug));
-    if (raw) setChecked(JSON.parse(raw));
+    if (raw) {
+      try {
+        setChecked(JSON.parse(raw));
+      } catch {
+        localStorage.removeItem(CK_KEY(lab.slug));
+      }
+    }
   }, [lab.slug]);
 
   const toggle = (i: number) => {
