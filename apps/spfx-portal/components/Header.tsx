@@ -29,6 +29,9 @@ export function Header() {
           <Link href="/studio" className="text-sm text-gray-600 hover:text-[var(--color-brand)] transition-colors">
             Studio
           </Link>
+          <Link href="/projects" className="text-sm text-gray-600 hover:text-[var(--color-brand)] transition-colors">
+            Projects
+          </Link>
           <span className="text-xs px-2.5 py-1 rounded-full bg-[oklch(0.97_0.02_60)] border border-[var(--color-warning)] text-[var(--color-warning)] font-medium">
             💡 {tokens}
           </span>
