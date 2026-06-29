@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getSupabaseClient } from './client';
 import { useAuth } from './useAuth';
 
-export type Persona = 'spark' | 'builder' | 'craftsman' | 'consultant' | 'architect' | 'explorer';
+export type Persona = 'spark' | 'builder' | 'craftsman' | 'consultant' | 'explorer' | 'maker' | 'architect' | 'integrator';
 
 function lsKey(portal: string) {
   return `persona_${portal}`;

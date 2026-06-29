@@ -7,7 +7,7 @@
 create table if not exists user_profiles (
   user_id    uuid references auth.users(id) on delete cascade not null,
   portal     text not null check (portal in ('react', 'spfx')),
-  persona    text not null check (persona in ('spark', 'builder', 'craftsman', 'consultant', 'architect', 'explorer')),
+  persona    text not null check (persona in ('spark', 'builder', 'craftsman', 'consultant', 'explorer', 'maker', 'architect', 'integrator')),
   created_at timestamptz default now(),
   primary key (user_id, portal)
 );
