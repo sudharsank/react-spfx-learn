@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { consumeHintToken, getHintTokens, useAdaptive } from '@repo/adaptive';
 import type { SpfxLabDefinition } from '../content/labs';
+import { AuthGuard } from '@repo/auth';
 
 export function SpfxLab({ lab }: { lab: SpfxLabDefinition }) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -27,6 +28,7 @@ export function SpfxLab({ lab }: { lab: SpfxLabDefinition }) {
   };
 
   return (
+    <AuthGuard>
     <main className="max-w-3xl mx-auto px-4 py-10">
       <div className="flex items-center gap-2 mb-2">
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${lab.type === 'guided' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'}`}>
@@ -93,5 +95,6 @@ export function SpfxLab({ lab }: { lab: SpfxLabDefinition }) {
         )}
       </ol>
     </main>
+    </AuthGuard>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAdaptive } from '@repo/adaptive';
 import type { DeployLab as IDeployLab } from '../content/deployLabs';
+import { AuthGuard } from '@repo/auth';
 
 const CK_KEY = (slug: string) => `deploy_lab_${slug}`;
 
@@ -38,6 +39,7 @@ export default function DeployLab({ lab }: { lab: IDeployLab }) {
   const allDone = checked.length === lab.steps.length;
 
   return (
+    <AuthGuard>
     <main className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -100,5 +102,6 @@ export default function DeployLab({ lab }: { lab: IDeployLab }) {
         {checked.length}/{lab.steps.length} steps completed — progress saved automatically
       </div>
     </main>
+    </AuthGuard>
   );
 }

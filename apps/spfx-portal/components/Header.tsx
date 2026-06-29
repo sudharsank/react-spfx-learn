@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuth } from '@repo/auth';
+import { useAuth, useVisitorCount } from '@repo/auth';
 import { getHintTokens } from '@repo/adaptive';
 import { useEffect, useState } from 'react';
 
 export function Header() {
   const { user, signInWithGitHub, signInWithMicrosoft, signOut } = useAuth();
   const [tokens, setTokens] = useState<number>(10);
+  const visitorCount = useVisitorCount('spfx');
 
   useEffect(() => {
     setTokens(getHintTokens());
@@ -38,6 +39,7 @@ export function Header() {
           <span className="text-xs px-2.5 py-1 rounded-full bg-[oklch(0.97_0.02_60)] border border-[var(--color-warning)] text-[var(--color-warning)] font-medium">
             💡 {tokens}
           </span>
+          {visitorCount !== null && <span className="text-xs text-gray-400">{visitorCount.toLocaleString()} learners today</span>}
           {user ? (
             <button
               onClick={signOut}

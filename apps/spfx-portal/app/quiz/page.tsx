@@ -6,14 +6,14 @@ import {
   SPFX_QUIZ,
   scoreQuiz,
   pickPersona,
-  SPFX_PERSONAS,
 } from '@repo/adaptive';
-import { setGuestProgress } from '@repo/auth';
+import { setGuestProgress, AuthGuard, useProfile } from '@repo/auth';
 
-export default function QuizPage() {
+function QuizContent() {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [step, setStep] = useState(0);
+  const { setPersona } = useProfile('spfx');
 
   const q = SPFX_QUIZ[step];
   const isLast = step === SPFX_QUIZ.length - 1;
@@ -22,12 +22,13 @@ export default function QuizPage() {
     setAnswers((prev) => ({ ...prev, [q.id]: optId }));
   }
 
-  function handleNext() {
+  async function handleNext() {
     if (!answers[q.id]) return;
     if (isLast) {
       const scores = scoreQuiz(answers, SPFX_QUIZ);
       const persona = pickPersona(scores);
       setGuestProgress({ persona });
+      await setPersona(persona);
       router.push(`/learn?persona=${persona}`);
     } else {
       setStep((s) => s + 1);
@@ -72,5 +73,13 @@ export default function QuizPage() {
         </button>
       </div>
     </main>
+  );
+}
+
+export default function QuizPage() {
+  return (
+    <AuthGuard>
+      <QuizContent />
+    </AuthGuard>
   );
 }
