@@ -25,7 +25,7 @@ create policy "Users update own profile"
 
 -- 2. portal_stats — daily visitor count per portal
 create table if not exists portal_stats (
-  portal  text not null,
+  portal  text not null check (portal in ('react', 'spfx')),
   date    date not null default current_date,
   count   int  not null default 0,
   primary key (portal, date)
