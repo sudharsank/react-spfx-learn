@@ -31,7 +31,8 @@ export function useProfile(portal: 'react' | 'spfx') {
       .select('persona')
       .eq('portal', portal)
       .maybeSingle()
-      .then(({ data }: any) => {
+      .then((result: unknown) => {
+        const { data } = result as { data: { persona: string } | null };
         if (data?.persona) {
           setPersonaState(data.persona as Persona);
           localStorage.setItem(lsKey(portal), data.persona);
@@ -48,9 +49,8 @@ export function useProfile(portal: 'react' | 'spfx') {
       }
       if (!user) return;
       const supabase = getSupabaseClient();
-      await (supabase as any)
-        .from('user_profiles')
-        .upsert({ user_id: user.id, portal, persona: p }, { onConflict: 'user_id,portal' });
+      // @ts-expect-error Supabase client is untyped without schema generation
+      await supabase.from('user_profiles').upsert([{ user_id: user.id, portal, persona: p }], { onConflict: 'user_id,portal' });
     },
     [user, portal]
   );
