@@ -5,6 +5,7 @@ import { useState, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import { consumeHintToken, getHintTokens, useAdaptive } from '@repo/adaptive';
 import type { LabDefinition } from '../content/labs';
+import { AuthGuard } from '@repo/auth';
 
 const PREVIEW_WRAP = (code: string) => `<!DOCTYPE html>
 <html><head>
@@ -37,7 +38,8 @@ export function ChallengeMode({ lab }: { lab: LabDefinition }) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-56px)]">
+    <AuthGuard>
+      <div className="flex h-[calc(100vh-56px)]">
       {/* Goal panel */}
       <aside className="w-72 flex-shrink-0 border-r border-gray-200 p-5 overflow-y-auto">
         <span className="text-xs font-bold text-purple-600 uppercase tracking-widest">⚡ Challenge</span>
@@ -98,5 +100,6 @@ export function ChallengeMode({ lab }: { lab: LabDefinition }) {
         <iframe srcDoc={preview} title="preview" sandbox="allow-scripts" className="flex-1 w-full border-0 bg-white" />
       </div>
     </div>
+    </AuthGuard>
   );
 }

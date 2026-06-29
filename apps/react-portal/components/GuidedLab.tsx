@@ -6,6 +6,7 @@ import Editor from '@monaco-editor/react';
 import { HintCard } from '@repo/ui';
 import { consumeHintToken, getHintTokens, useAdaptive } from '@repo/adaptive';
 import type { LabDefinition } from '../content/labs';
+import { AuthGuard } from '@repo/auth';
 
 const PREVIEW_WRAP = (code: string) => `<!DOCTYPE html>
 <html><head>
@@ -48,7 +49,8 @@ export function GuidedLab({ lab }: { lab: LabDefinition }) {
   };
 
   return (
-    <div className="flex h-[calc(100vh-56px)]">
+    <AuthGuard>
+      <div className="flex h-[calc(100vh-56px)]">
       {/* Step panel */}
       <aside className="w-72 flex-shrink-0 border-r border-gray-200 overflow-y-auto p-4">
         <h2 className="font-bold text-gray-800 mb-4">{lab.title}</h2>
@@ -114,5 +116,6 @@ export function GuidedLab({ lab }: { lab: LabDefinition }) {
         <iframe srcDoc={preview} title="preview" sandbox="allow-scripts" className="flex-1 w-full border-0 bg-white" />
       </div>
     </div>
+    </AuthGuard>
   );
 }

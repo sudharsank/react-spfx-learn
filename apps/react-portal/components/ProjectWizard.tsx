@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { useAdaptive } from '@repo/adaptive';
 import type { Project } from '../content/projects';
+import { AuthGuard } from '@repo/auth';
 
 const CK_KEY = (slug: string) => `project_checkpoint_${slug}`;
 
@@ -76,6 +77,7 @@ export default function ProjectWizard({ project }: { project: Project }) {
   const allDone = completed.length === project.steps.length;
 
   return (
+    <AuthGuard>
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <div className="w-64 flex-shrink-0 bg-gray-50 border-r border-gray-200 flex flex-col">
@@ -158,5 +160,6 @@ export default function ProjectWizard({ project }: { project: Project }) {
         </div>
       </div>
     </div>
+    </AuthGuard>
   );
 }

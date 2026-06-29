@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { useStudioStorage } from '@repo/adaptive';
+import { AuthGuard } from '@repo/auth';
 
 const DEFAULT_FILES = [
   {
@@ -84,6 +85,7 @@ export default function StudioPage() {
   }
 
   return (
+    <AuthGuard>
     <div className="flex flex-col h-screen bg-[#1e1e2e]">
       {/* Toolbar */}
       <div className="flex items-center gap-2 px-4 py-2 bg-[#13131f] border-b border-white/10">
@@ -151,5 +153,6 @@ export default function StudioPage() {
         </div>
       </div>
     </div>
+    </AuthGuard>
   );
 }
